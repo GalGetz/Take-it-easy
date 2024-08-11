@@ -34,9 +34,8 @@ class RandomOpponentAgent(Agent):
         return tile
 
 class Game:
-    def __init__(self, agent, opponent_agent, sleep_between_actions=False):
+    def __init__(self, agent, opponent_agent):
         super(Game, self).__init__()
-        self.sleep_between_actions = sleep_between_actions
         self.agent = agent
         self.opponent_agent = opponent_agent
         self._state = None
@@ -47,27 +46,32 @@ class Game:
         self._state = initial_state
         self._should_quit = False
 
-    def step(self):
-        """Run a single iteration of the game."""
+    def current_tile(self):
+        """Run the opponent's step, returning the tile drawn by the opponent."""
         if self._state.done or self._should_quit or not self._state.tiles:
-            return None, self._state.score
-
-        if self.sleep_between_actions:
-            time.sleep(1)
+            return None
 
         # The opponent agent selects the tile
         tile = self.opponent_agent.get_action(self._state)
         if tile == Action.STOP or not tile:
-            return None, self._state.score
+            return None
+
+        return tile
+
+    def agent_location(self, tile):
+        """Run the agent's step, returning the location where the tile is placed."""
+        if self._state.done or self._should_quit:
+            return None
 
         # The main agent decides where to place the selected tile
         action = self.agent.get_action(self._state, tile)
         if action == Action.STOP:
-            return None, self._state.score
+            return None
 
+        # Apply the chosen action to the game state
         self._state.apply_action(action.index, tile)
 
-        return self._state.board, self._state.score
+        return action.index
 
     def quit(self):
         self._should_quit = True

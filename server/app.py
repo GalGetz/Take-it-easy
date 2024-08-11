@@ -11,7 +11,7 @@ data = {'current': [],
 
 
 @app.route('/current_tile', methods=['GET'])
-def get_data():
+def current_tile():
     tile = [1,1,1] # for tests
     response = {
         'status': 'success',
@@ -20,7 +20,7 @@ def get_data():
     return jsonify(response)
 
 @app.route('/agent_location', methods=['GET'])
-def get_data():
+def agent_location():
     location = 0 # for tests
     response = {
         'status': 'success',
@@ -29,7 +29,7 @@ def get_data():
     return jsonify(response)
 
 @app.route('/agent_score', methods=['GET'])
-def get_data():
+def agent_score():
     score = -1 # for tests
     response = {
         'status': 'success',
@@ -38,7 +38,7 @@ def get_data():
     return jsonify(response)
 
 @app.route('/set_agent', methods=['POST'])
-def post_data():
+def set_agent():
     json = request.get_json()
     data['current'] = json['current']
     data['tiles'] = json['tiles']

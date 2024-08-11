@@ -33,7 +33,7 @@ class RandomOpponentAgent(Agent):
         tile = game_state.pop_random_tile(index)
         return tile
 
-class Game(object):
+class Game:
     def __init__(self, agent, opponent_agent, sleep_between_actions=False):
         super(Game, self).__init__()
         self.sleep_between_actions = sleep_between_actions
@@ -42,30 +42,34 @@ class Game(object):
         self._state = None
         self._should_quit = False
 
-    def run(self, initial_state):
-        self._should_quit = False
+    def initialize(self, initial_state):
+        """Initialize the game with the initial state."""
         self._state = initial_state
-        return self._game_loop()
+        self._should_quit = False
+
+    def step(self):
+        """Run a single iteration of the game."""
+        if self._state.done or self._should_quit or not self._state.tiles:
+            return None, self._state.score
+
+        if self.sleep_between_actions:
+            time.sleep(1)
+
+        # The opponent agent selects the tile
+        tile = self.opponent_agent.get_action(self._state)
+        if tile == Action.STOP or not tile:
+            return None, self._state.score
+
+        # The main agent decides where to place the selected tile
+        action = self.agent.get_action(self._state, tile)
+        if action == Action.STOP:
+            return None, self._state.score
+
+        self._state.apply_action(action.index, tile)
+
+        return self._state.board, self._state.score
 
     def quit(self):
         self._should_quit = True
         self.agent.stop_running()
         self.opponent_agent.stop_running()
-
-    def _game_loop(self):
-        while not self._state.done and not self._should_quit and self._state.tiles:
-            if self.sleep_between_actions:
-                time.sleep(1)
-
-            # The opponent agent selects the tile
-            tile = self.opponent_agent.get_action(self._state)
-            if tile == Action.STOP or not tile:
-                return
-
-            # The main agent decides where to place the selected tile
-            action = self.agent.get_action(self._state, tile)
-            if action == Action.STOP:
-                return
-            self._state.apply_action(action.index, tile)
-
-        return self._state.score

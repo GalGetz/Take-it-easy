@@ -1,8 +1,8 @@
 from game import Agent, PlacementAction, Action
 
-class ExpectimaxAgent(Agent):
+class Expectimax(Agent):
     def __init__(self, depth=3, evaluation_function=None):
-        super(ExpectimaxAgent, self).__init__()
+        super(Expectimax, self).__init__()
         self.depth = depth
         self.evaluation_function = evaluation_function if evaluation_function else self.default_evaluation_function
 

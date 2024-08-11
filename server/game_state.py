@@ -96,7 +96,7 @@ class GameState:
     def tiles(self):
         return self._tiles
 
-    def get_legal_actions(self, agent_index):
+    def get_legal_actions(self, agent_index=0):
         if agent_index == 0:
             return self.get_agent_legal_actions()
         elif agent_index == 1:
@@ -109,8 +109,7 @@ class GameState:
         return [i for i, tile in enumerate(self._board) if tile is None]
 
     def get_opponent_legal_actions(self):
-        empty_tiles = self.get_empty_tiles()
-        return [OpponentAction(index=i, value=tile) for i in empty_tiles for tile in self._tiles]
+        return list(self._tiles)
 
     def get_empty_tiles(self):
         # Returns the indices of all empty tiles on the board

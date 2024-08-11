@@ -89,7 +89,7 @@ def init_game():
     data = request.get_json()
 
     global manager
-    manager = GameManager(data.agent)
+    manager = GameManager(data['agent'])
 
     return 'OK', 200
 

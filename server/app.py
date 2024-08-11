@@ -1,4 +1,6 @@
-from flask import Flask, request, jsonify 
+import json
+
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from game import Game, RandomOpponentAgent
 from game_state import GameState
@@ -48,7 +50,7 @@ class GameManager:
                 return None, None
 
     def get_agent_score(self):
-        return self._game._state.score()
+        return self._game._state.score
 
     def get_user_score(self, board):
         return GameState.calculate_score(board)
@@ -86,8 +88,8 @@ def agent_location():
 
 @app.route('/scores', methods=['GET'])
 def scores():
-    data = request.get_json()
-    board = data['tiles']
+    tiles = request.args.get('tiles')
+    board = json.loads(tiles)
     agent_score = manager.get_agent_score()
     user_score = manager.get_user_score(board)
     response = {

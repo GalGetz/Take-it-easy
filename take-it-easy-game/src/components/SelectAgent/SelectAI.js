@@ -11,13 +11,14 @@ export default function BasicSelect({ agent, setAgent }) {
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box sx={{ minWidth: 200 }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Agent</InputLabel>
         <Select value={agent} label="Agent" onChange={handleChange}>
-          <MenuItem value={'RL'}>RL</MenuItem>
+          <MenuItem value={'RL'}>Reinforcement Learning</MenuItem>
           <MenuItem value={'A-star'}>A-star</MenuItem>
           <MenuItem value={'Monte Carlo'}>Monte Carlo</MenuItem>
+          <MenuItem value={'Random'}>Random</MenuItem>
         </Select>
       </FormControl>
     </Box>

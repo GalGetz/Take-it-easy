@@ -1,6 +1,5 @@
 // src/components/Board.js
 import React from 'react';
-// import styled from 'styled-components';
 import { Box, Typography } from '@mui/material';
 import Tile from './Tile';
 import '../styles.css';
@@ -33,9 +32,8 @@ function Board({ title, onChoose, placedTiles }) {
               <Tile
                 index={tileIndex}
                 values={placedTiles[tileIndex - 1]}
-                onClick={onChoose} // Example values
+                onClick={onChoose}
               />
-              {tileIndex}
             </div>
           );
         })}

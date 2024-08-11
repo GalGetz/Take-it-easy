@@ -31,11 +31,14 @@ const ScoreBox = styled(Box)(({ theme }) => ({
 
 const EndGame = ({ playerScore, onRestart }) => {
   const [score, setScore] = useState(null);
-  const isPlayerWinner = playerScore > aiScore;
 
-  useEffect(async () => {
-    const aiScore = await getAIScore();
-    setScore(aiScore);
+  useEffect(() => {
+    async function fetchScore() {
+      const aiScore = await getAIScore();
+      console.log(aiScore);
+      setScore(aiScore);
+    }
+    fetchScore();
   }, []);
 
   return score ? (
@@ -61,12 +64,12 @@ const EndGame = ({ playerScore, onRestart }) => {
               AI Score:
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: '300' }}>
-              {aiScore}
+              {score}
             </Typography>
           </ScoreBox>
         </Box>
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          {isPlayerWinner ? (
+          {playerScore > score ? (
             <EmojiEventsIcon sx={{ fontSize: 80, color: '#ffeb3b' }} />
           ) : (
             <SentimentVeryDissatisfiedIcon
@@ -74,7 +77,7 @@ const EndGame = ({ playerScore, onRestart }) => {
             />
           )}
           <Typography variant="h4" gutterBottom sx={{ fontWeight: '300' }}>
-            {isPlayerWinner ? 'You Win!' : 'AI Wins!'}
+            {playerScore > score ? 'You Win!' : 'AI Wins!'}
           </Typography>
         </Box>
         <Button

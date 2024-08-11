@@ -79,7 +79,7 @@ class Game:
             return None
 
         # Apply the chosen action to the game state
-        self._state.apply_action(action.index, tile)
+        self._state.apply_action(action.index)
 
         return action.index
 

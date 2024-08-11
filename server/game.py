@@ -8,7 +8,8 @@ class Action(Enum):
     PLACE_TILE = 1
     STOP = 2
 
-PlacementAction = namedtuple('PlacementAction', ['row', 'column'])
+# Updated PlacementAction to only include the index
+PlacementAction = namedtuple('PlacementAction', ['index'])
 
 class Agent(object):
     def __init__(self):
@@ -26,8 +27,10 @@ class RandomOpponentAgent(Agent):
     def get_action(self, game_state, tile=None):
         if not game_state.tiles:
             return Action.STOP
-        # Randomly choose a tile for the main agent to place
-        tile = game_state.draw_tile()
+        # Randomly choose an index from the sorted set
+        index = np.random.choice(len(game_state.tiles))
+        # Pop the tile from the sorted set at the chosen index
+        tile = game_state.pop_random_tile(index)
         return tile
 
 class Game(object):
@@ -63,6 +66,6 @@ class Game(object):
             action = self.agent.get_action(self._state, tile)
             if action == Action.STOP:
                 return
-            self._state.apply_action((action.row, action.column), tile)
+            self._state.apply_action(action.index, tile)
 
         return self._state.score

@@ -2,14 +2,16 @@ import abc
 from collections import namedtuple
 from enum import Enum
 import numpy as np
-import time
+
 
 class Action(Enum):
     PLACE_TILE = 1
     STOP = 2
 
+
 # Updated PlacementAction to only include the index
 PlacementAction = namedtuple('PlacementAction', ['index'])
+
 
 class Agent(object):
     def __init__(self):
@@ -23,6 +25,7 @@ class Agent(object):
     def stop_running(self):
         pass
 
+
 class RandomOpponentAgent(Agent):
     def get_action(self, game_state, tile=None):
         if not game_state.tiles:
@@ -32,6 +35,7 @@ class RandomOpponentAgent(Agent):
         # Pop the tile from the sorted set at the chosen index
         tile = game_state.pop_random_tile(index)
         return tile
+
 
 class Game:
     def __init__(self, agent, opponent_agent):

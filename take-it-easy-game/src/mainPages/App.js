@@ -1,5 +1,5 @@
 // src/App.js
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography } from '@mui/material';
 import {
   BrowserRouter as Router,
@@ -65,7 +65,7 @@ function App() {
         <Route
           path="/end"
           element={
-            <EndGame onRestart={restartGame} placedTiles={placedTiles} />
+            <EndGame onRestart={restartGame} playerTiles={placedTiles} />
           }
         />
       </Routes>

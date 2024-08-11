@@ -21,7 +21,7 @@ export const getAIPlacement = async () => {
 export const getScores = async (tiles) => {
   try {
     const response = await axios.get('http://127.0.0.1:5000/scores', {
-      tiles,
+      params: { tiles: JSON.stringify(tiles) },
     });
     return response.data;
   } catch (e) {

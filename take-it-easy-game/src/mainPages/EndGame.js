@@ -8,7 +8,7 @@ import {
   Divider,
   CircularProgress,
 } from '@mui/material';
-import { getAIScore } from '../game-api';
+import { getScores } from '../game-api';
 import { styled } from '@mui/system';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
@@ -29,12 +29,13 @@ const ScoreBox = styled(Box)(({ theme }) => ({
   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
 }));
 
-const EndGame = ({ playerScore, onRestart, playerTiles }) => {
+const EndGame = ({ onRestart, playerTiles }) => {
   const [score, setScore] = useState(null);
   const [playerScore, setPlayerScore] = useState(null);
 
   useEffect(() => {
     async function fetchScore() {
+      console.log(playerTiles);
       const response = await getScores(playerTiles);
       console.log(response);
       setScore(response.agent_score);
@@ -43,7 +44,7 @@ const EndGame = ({ playerScore, onRestart, playerTiles }) => {
     fetchScore();
   }, []);
 
-  return score ? (
+  return playerScore ? (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
       <StyledPaper elevation={3}>
         <Box sx={{ mb: 4 }}>

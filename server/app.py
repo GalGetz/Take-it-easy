@@ -8,15 +8,36 @@ CORS(app)  # This will enable CORS for all routes
 data = {'current': [],
          'tiles': []}
 
-@app.route('/data', methods=['GET'])
+
+
+@app.route('/current_tile', methods=['GET'])
 def get_data():
+    tile = [1,1,1] # for tests
     response = {
         'status': 'success',
-        'data': data,
+        'data': tile,
     }
     return jsonify(response)
 
-@app.route('/data', methods=['POST'])
+@app.route('/agent_location', methods=['GET'])
+def get_data():
+    location = 0 # for tests
+    response = {
+        'status': 'success',
+        'data': location,
+    }
+    return jsonify(response)
+
+@app.route('/agent_score', methods=['GET'])
+def get_data():
+    score = -1 # for tests
+    response = {
+        'status': 'success',
+        'data': score,
+    }
+    return jsonify(response)
+
+@app.route('/set_agent', methods=['POST'])
 def post_data():
     json = request.get_json()
     data['current'] = json['current']

@@ -13,7 +13,7 @@ function TilePicker({ currentTile }) {
     >
       <CardHeader title="Current Tile" />
       <CardContent>
-        <div style={{ width: 104, height: 80, marginLeft: 10 }}>
+        <div style={{ width: 100, height: 80, marginLeft: 10 }}>
           {currentTile && <Tile values={currentTile} isPicker={true} />}
         </div>
       </CardContent>

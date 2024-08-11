@@ -47,7 +47,6 @@ function HomePage({ onStart }) {
             <Typography variant="h6" component="span">
               Choose AI Player
             </Typography>
-            <Typography>RL, A-star and more</Typography>
           </TimelineContent>
         </TimelineItem>
         <TimelineItem>
@@ -62,7 +61,6 @@ function HomePage({ onStart }) {
             <Typography variant="h6" component="span">
               Start to play
             </Typography>
-            <Typography>Choose carefully your tactics</Typography>
           </TimelineContent>
         </TimelineItem>
         <TimelineItem>
@@ -73,9 +71,8 @@ function HomePage({ onStart }) {
           </TimelineSeparator>
           <TimelineContent sx={{ py: '12px', px: 2 }}>
             <Typography variant="h6" component="span">
-              ScoreBoard
+              Score Board
             </Typography>
-            <Typography>Did you won? :)</Typography>
           </TimelineContent>
         </TimelineItem>
         <TimelineItem>
@@ -90,8 +87,6 @@ function HomePage({ onStart }) {
             <Typography variant="h6" component="span">
               Repeat
             </Typography>
-            <Typography>Won? choose different agent</Typography>
-            <Typography>Lost? Try again</Typography>
           </TimelineContent>
         </TimelineItem>
       </Timeline>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -6,23 +6,12 @@ import {
   Container,
   Paper,
   Divider,
+  CircularProgress,
 } from '@mui/material';
+import { getScores } from '../game-api';
 import { styled } from '@mui/system';
-// import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import { lime, purple } from '@mui/material/colors';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-
-// const theme = createTheme({
-//   palette: {
-//     ochre: {
-//       main: '#E3D026',
-//       light: '#E9DB5D',
-//       dark: '#A29415',
-//       contrastText: '#242105',
-//     },
-//   },
-// });
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -40,11 +29,22 @@ const ScoreBox = styled(Box)(({ theme }) => ({
   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
 }));
 
-const EndGame = ({ playerScore, aiScore, onRestart }) => {
-  const isPlayerWinner = playerScore > aiScore;
+const EndGame = ({ onRestart, playerTiles }) => {
+  const [score, setScore] = useState(null);
+  const [playerScore, setPlayerScore] = useState(null);
 
-  return (
-    // <ThemeProvider theme={theme}>
+  useEffect(() => {
+    async function fetchScore() {
+      console.log(playerTiles);
+      const response = await getScores(playerTiles);
+      console.log(response);
+      setScore(response.agent_score);
+      setPlayerScore(response.user_score);
+    }
+    fetchScore();
+  }, []);
+
+  return playerScore ? (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
       <StyledPaper elevation={3}>
         <Box sx={{ mb: 4 }}>
@@ -67,12 +67,12 @@ const EndGame = ({ playerScore, aiScore, onRestart }) => {
               AI Score:
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: '300' }}>
-              {aiScore}
+              {score}
             </Typography>
           </ScoreBox>
         </Box>
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          {isPlayerWinner ? (
+          {playerScore > score ? (
             <EmojiEventsIcon sx={{ fontSize: 80, color: '#ffeb3b' }} />
           ) : (
             <SentimentVeryDissatisfiedIcon
@@ -80,7 +80,7 @@ const EndGame = ({ playerScore, aiScore, onRestart }) => {
             />
           )}
           <Typography variant="h4" gutterBottom sx={{ fontWeight: '300' }}>
-            {isPlayerWinner ? 'You Win!' : 'AI Wins!'}
+            {playerScore > score ? 'You Win!' : 'AI Wins!'}
           </Typography>
         </Box>
         <Button
@@ -98,7 +98,8 @@ const EndGame = ({ playerScore, aiScore, onRestart }) => {
         </Button>
       </StyledPaper>
     </Container>
-    // </ThemeProvider>
+  ) : (
+    <CircularProgress color="inherit" />
   );
 };
 

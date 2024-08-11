@@ -1,0 +1,104 @@
+/* General styles */
+
+.AppContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  justify-content: center;
+}
+
+.BoardContainer {
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(5, 80px);
+  grid-template-rows: repeat(9, 45px);
+  background-color: #e2e8e4;
+  padding: 40px;
+  border-radius: 20px;
+  border-style: solid;
+}
+
+.HexCell {
+  width: 130%;
+  height: 190%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.TileContainer {
+  width: 100%;
+  height: 100%;
+  background-color: #a0ebb7;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  display: grid;
+  grid-template-areas:
+    'top top'
+    'left right'
+    'bottom bottom';
+  color: white;
+  /* font-weight: bold; */
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
+}
+
+.Picker {
+  width: 100%;
+  height: 100%;
+  background-color: #13637d;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  display: grid;
+  grid-template-areas:
+    'top top'
+    'left right'
+    'bottom bottom';
+  color: white;
+  font-weight: bold;
+  font-size: 22px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
+}
+
+.TileContainer:hover {
+  transform: scale(1.05);
+  background-color: #13637d;
+}
+
+.NumberTop,
+.NumberLeft,
+.NumberRight {
+  padding: 5px 5px;
+  border-radius: 3px;
+  justify-self: center;
+}
+
+.NumberTop {
+  grid-area: top;
+  background-color: var(--color-top);
+  height: 200%;
+  /* width: 10%; */
+}
+
+.NumberLeft {
+  align-self: center;
+  margin-left: 25px;
+  background-color: var(--color-left);
+  height: 220%;
+  /* width: 25%; */
+  transform: rotate(-60deg) translate(90%, 0%);
+}
+
+.NumberRight {
+  align-self: center;
+  margin-right: 25px;
+  background-color: var(--color-right);
+  height: 220%;
+  /* width: 20%; */
+  transform: rotate(60deg) translate(-90%, 0%);
+}

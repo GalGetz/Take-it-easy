@@ -8,7 +8,8 @@ class Action(Enum):
     PLACE_TILE = 1
     STOP = 2
 
-PlacementAction = namedtuple('PlacementAction', ['row', 'column'])
+# Updated PlacementAction to only include the index
+PlacementAction = namedtuple('PlacementAction', ['index'])
 
 class Agent(object):
     def __init__(self):
@@ -26,43 +27,53 @@ class RandomOpponentAgent(Agent):
     def get_action(self, game_state, tile=None):
         if not game_state.tiles:
             return Action.STOP
-        # Randomly choose a tile for the main agent to place
-        tile = game_state.draw_tile()
+        # Randomly choose an index from the sorted set
+        index = np.random.choice(len(game_state.tiles))
+        # Pop the tile from the sorted set at the chosen index
+        tile = game_state.pop_random_tile(index)
         return tile
 
-class Game(object):
-    def __init__(self, agent, opponent_agent, sleep_between_actions=False):
+class Game:
+    def __init__(self, agent, opponent_agent):
         super(Game, self).__init__()
-        self.sleep_between_actions = sleep_between_actions
         self.agent = agent
         self.opponent_agent = opponent_agent
         self._state = None
         self._should_quit = False
 
-    def run(self, initial_state):
-        self._should_quit = False
+    def initialize(self, initial_state):
+        """Initialize the game with the initial state."""
         self._state = initial_state
-        return self._game_loop()
+        self._should_quit = False
+
+    def current_tile(self):
+        """Run the opponent's step, returning the tile drawn by the opponent."""
+        if self._state.done or self._should_quit or not self._state.tiles:
+            return None
+
+        # The opponent agent selects the tile
+        tile = self.opponent_agent.get_action(self._state)
+        if tile == Action.STOP or not tile:
+            return None
+
+        return tile
+
+    def agent_location(self, tile):
+        """Run the agent's step, returning the location where the tile is placed."""
+        if self._state.done or self._should_quit:
+            return None
+
+        # The main agent decides where to place the selected tile
+        action = self.agent.get_action(self._state, tile)
+        if action == Action.STOP:
+            return None
+
+        # Apply the chosen action to the game state
+        self._state.apply_action(action.index, tile)
+
+        return action.index
 
     def quit(self):
         self._should_quit = True
         self.agent.stop_running()
         self.opponent_agent.stop_running()
-
-    def _game_loop(self):
-        while not self._state.done and not self._should_quit and self._state.tiles:
-            if self.sleep_between_actions:
-                time.sleep(1)
-
-            # The opponent agent selects the tile
-            tile = self.opponent_agent.get_action(self._state)
-            if tile == Action.STOP or not tile:
-                return
-
-            # The main agent decides where to place the selected tile
-            action = self.agent.get_action(self._state, tile)
-            if action == Action.STOP:
-                return
-            self._state.apply_action((action.row, action.column), tile)
-
-        return self._state.score

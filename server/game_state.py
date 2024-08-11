@@ -1,5 +1,5 @@
 import copy
-import numpy as np
+from sortedcontainers import SortedSet
 
 # Global seq_to_idx dictionary
 seq_to_idx = {
@@ -32,18 +32,19 @@ idx_to_seq = [
     ["2_d", "1_r", "5_l"],  # Index 7
     ["2_l", "3_d", "8_r"],  # Index 8
     ["0_d", "5_l", "3_r"],  # Index 9
-    ["10_l", "5_d", "1_r"], # Index 10
+    ["10_l", "5_d", "1_r"],  # Index 10
     ["5_l", "1_d", "8_r"],  # Index 11
-    ["2_d", "10_l", "3_r"], # Index 12
-    ["5_l", "3_d", "13_r"], # Index 13
-    ["0_d", "10_l", "8_r"], # Index 14
-    ["15_l", "5_d", "3_r"], # Index 15
-    ["1_d", "10_l", "13_r"],# Index 16
-    ["2_d", "15_l", "8_r"], # Index 17
-    ["0_d", "15_l", "13_r"] # Index 18
+    ["2_d", "10_l", "3_r"],  # Index 12
+    ["5_l", "3_d", "13_r"],  # Index 13
+    ["0_d", "10_l", "8_r"],  # Index 14
+    ["15_l", "5_d", "3_r"],  # Index 15
+    ["1_d", "10_l", "13_r"],  # Index 16
+    ["2_d", "15_l", "8_r"],  # Index 17
+    ["0_d", "15_l", "13_r"]  # Index 18
 ]
 
 DEFAULT_BOARD_SIZE = 19  # We now represent the board as a list of 19 elements
+
 
 class GameState:
     def __init__(self, board=None, score=0, done=False, remaining_tiles=None):
@@ -103,10 +104,48 @@ class GameState:
     def apply_action(self, idx, tile):
         if self._board[idx] is not None:
             raise Exception("Illegal action: Tile placement on an already occupied spot.")
+
+        # Place the tile on the board
         self._board[idx] = tile
-        if all(t is not None for t in self._board):  # If no empty spots left, game is done
+
+        # Incrementally update the score
+        self.update_score(idx, tile)
+
+        # If no empty spots are left, the game is done
+        if all(t is not None for t in self._board):
             self._done = True
-        #todo: update the score each time we put a tile
+
+    def update_score(self, idx, tile):
+        """Update the score incrementally based on the tile placed at idx."""
+
+        def calculate_score(indices, component_index):
+            first_tile = self._board[indices[0]]
+            if first_tile is None or first_tile[component_index] != tile[component_index]:
+                return 0
+
+            component_value = first_tile[component_index]
+            for sub_idx in indices[1:]:
+                current_tile = self._board[sub_idx]
+                if current_tile is None or current_tile[component_index] != component_value:
+                    return 0
+
+            return component_value * len(indices)
+
+        # Get the sequences (rows, columns, diagonals) that include the placed tile
+        sequences = idx_to_seq[idx]
+
+        # Update the score by calculating the contribution of the new tile in each sequence
+        for seq in sequences:
+            component_index = None
+            if "_l" in seq:
+                component_index = 1  # Left component
+            elif "_d" in seq:
+                component_index = 0  # Vertical component
+            elif "_r" in seq:
+                component_index = 2  # Right component
+
+            # Add the score for this sequence
+            self._score += calculate_score(seq_to_idx[seq], component_index)
 
     def generate_successor(self, idx, tile):
         successor = GameState(board=copy.deepcopy(self._board), score=self._score, done=self._done,

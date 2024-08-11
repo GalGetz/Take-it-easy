@@ -8,13 +8,14 @@ import threading
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 
+manager = None
 class GameManager:
     def __init__(self, agent):
         # Initialize the game state
         self._initial_state = GameState()
 
         # Initialize the agents
-        self._agent = AgentFactory(agent)
+        self._agent = AgentFactory.create_agent(agent)
         self._opponent_agent = RandomOpponentAgent()
 
         # Initialize the game
@@ -84,12 +85,14 @@ def agent_score():
     }
     return jsonify(response)
 
-@app.route('/data', methods=['POST'])
-def post_data():
-    json = request.get_json()
-    data['current'] = json['current']
-    data['tiles'] = json['tiles']
-    return 'OK'
+@app.route('/init_game', methods=['POST'])
+def init_game():
+    data = request.get_json()
+
+    global manager
+    manager = GameManager(data['agent'])
+
+    return 'OK', 200
 
 if __name__ == '__main__':
     app.run(debug=True)

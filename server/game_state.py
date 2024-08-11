@@ -32,18 +32,19 @@ idx_to_seq = [
     ["2_d", "1_r", "5_l"],  # Index 7
     ["2_l", "3_d", "8_r"],  # Index 8
     ["0_d", "5_l", "3_r"],  # Index 9
-    ["10_l", "5_d", "1_r"], # Index 10
+    ["10_l", "5_d", "1_r"],  # Index 10
     ["5_l", "1_d", "8_r"],  # Index 11
-    ["2_d", "10_l", "3_r"], # Index 12
-    ["5_l", "3_d", "13_r"], # Index 13
-    ["0_d", "10_l", "8_r"], # Index 14
-    ["15_l", "5_d", "3_r"], # Index 15
-    ["1_d", "10_l", "13_r"],# Index 16
-    ["2_d", "15_l", "8_r"], # Index 17
-    ["0_d", "15_l", "13_r"] # Index 18
+    ["2_d", "10_l", "3_r"],  # Index 12
+    ["5_l", "3_d", "13_r"],  # Index 13
+    ["0_d", "10_l", "8_r"],  # Index 14
+    ["15_l", "5_d", "3_r"],  # Index 15
+    ["1_d", "10_l", "13_r"],  # Index 16
+    ["2_d", "15_l", "8_r"],  # Index 17
+    ["0_d", "15_l", "13_r"]  # Index 18
 ]
 
 DEFAULT_BOARD_SIZE = 19  # We now represent the board as a list of 19 elements
+
 
 class GameState:
     def __init__(self, board=None, score=0, done=False, remaining_tiles=None):

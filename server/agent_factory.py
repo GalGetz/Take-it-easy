@@ -1,4 +1,4 @@
-from server.random_agent import RandomAgent
+from random_agent import RandomAgent
 
 
 class AgentFactory:

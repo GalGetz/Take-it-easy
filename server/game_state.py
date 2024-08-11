@@ -1,7 +1,9 @@
 import copy
 from sortedcontainers import SortedSet
+import numpy as np
+from game import Action, OpponentAction
 
-# Global seq_to_idx dictionary
+# Global seq_to_idx dictionary (for scoring sequences)
 seq_to_idx = {
     "0_l": [0, 1, 3],
     "2_l": [2, 4, 6, 8],
@@ -20,7 +22,7 @@ seq_to_idx = {
     "13_r": [13, 16, 18]
 }
 
-# Global idx_to_seq list
+# Global idx_to_seq list (mapping board indices to sequences)
 idx_to_seq = [
     ["0_l", "0_d", "0_r"],  # Index 0
     ["0_l", "1_d", "1_r"],  # Index 1
@@ -44,7 +46,6 @@ idx_to_seq = [
 ]
 
 DEFAULT_BOARD_SIZE = 19  # We now represent the board as a list of 19 elements
-
 
 class GameState:
     def __init__(self, board=None, score=0, done=False, remaining_tiles=None):
@@ -97,11 +98,30 @@ class GameState:
     def tiles(self):
         return self._tiles
 
-    def get_legal_actions(self):
+    def get_legal_actions(self, agent_index):
+        if agent_index == 0:
+            return self.get_agent_legal_actions()
+        elif agent_index == 1:
+            return self.get_opponent_legal_actions()
+        else:
+            raise Exception("Illegal agent index.")
+
+    def get_agent_legal_actions(self):
         # Legal actions are the indices on the board that are still None
         return [i for i, tile in enumerate(self._board) if tile is None]
 
-    def apply_action(self, idx, tile):
+    def get_opponent_legal_actions(self):
+        empty_tiles = self.get_empty_tiles()
+        return [OpponentAction(index=i, value=tile) for i in empty_tiles for tile in self._tiles]
+
+    def get_empty_tiles(self):
+        # Returns the indices of all empty tiles on the board
+        return [i for i, tile in enumerate(self._board) if tile is None]
+
+    def apply_action(self, action):
+        idx = action.index
+        tile = action.tile
+
         if self._board[idx] is not None:
             raise Exception("Illegal action: Tile placement on an already occupied spot.")
 
@@ -147,46 +167,28 @@ class GameState:
             # Add the score for this sequence
             self._score += calculate_score(seq_to_idx[seq], component_index)
 
-    def generate_successor(self, idx, tile):
+    def generate_successor(self, agent_index=0, action=None):
         successor = GameState(board=copy.deepcopy(self._board), score=self._score, done=self._done,
                               remaining_tiles=self._tiles.copy())  # Use copy() for SortedSet
-        successor.apply_action(idx, tile)
+        if agent_index == 0:
+            successor.apply_action(action)
+        elif agent_index == 1:
+            successor.apply_opponent_action(action)
+        else:
+            raise Exception("Illegal agent index.")
         return successor
 
-    def evaluate_game_state(self):
-        total_score = 0
-
-        def calculate_score(indices, component_index):
-            first_tile = self._board[indices[0]]
-            if first_tile is None:
-                return 0
-
-            component_value = first_tile[component_index]
-            for idx in indices[1:]:
-                tile = self._board[idx]
-                if tile is None or tile[component_index] != component_value:
-                    return 0
-
-            return component_value * len(indices)
-
-        # Calculate the score for each sequence
-        for seq, indices in seq_to_idx.items():
-            if "l" in seq:
-                total_score += calculate_score(indices, 1)  # Left component
-            elif "d" in seq:
-                total_score += calculate_score(indices, 0)  # Vertical component
-            elif "r" in seq:
-                total_score += calculate_score(indices, 2)  # Right component
-
-        self._score = total_score
-        return total_score
+    def apply_opponent_action(self, action):
+        if self._board[action.index] is not None:
+            raise Exception(f"Illegal opponent action: Tile placement on an already occupied spot at index {action.index}.")
+        self.apply_action(action)
 
     def is_game_over(self):
         return self._done
 
     def get_game_outcome(self):
         if self.is_game_over():
-            return self.evaluate_game_state()
+            return self._score
         return None  # Game is still ongoing
 
     @staticmethod
@@ -216,4 +218,3 @@ class GameState:
                 total_score += calculate_score_for_sequence(indices, 2)  # Right component
 
         return total_score
-

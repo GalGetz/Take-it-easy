@@ -85,9 +85,11 @@ def agent_location():
     return jsonify(response)
 
 @app.route('/scores', methods=['GET'])
-def agent_score():
+def scores():
+    data = request.get_json()
+    board = data['tiles']
     agent_score = manager.get_agent_score()
-    user_score = manager.get_user_score()
+    user_score = manager.get_user_score(board)
     response = {
         'status': 'success',
         'agent_score': agent_score,

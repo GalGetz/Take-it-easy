@@ -188,3 +188,32 @@ class GameState:
         if self.is_game_over():
             return self.evaluate_game_state()
         return None  # Game is still ongoing
+
+    @staticmethod
+    def calculate_score(board):
+        """Static method to calculate the score based on the current board state."""
+        total_score = 0
+
+        def calculate_score_for_sequence(indices, component_index):
+            first_tile = board[indices[0]]
+            if first_tile is None:
+                return 0
+
+            component_value = first_tile[component_index]
+            for idx in indices[1:]:
+                tile = board[idx]
+                if tile is None or tile[component_index] != component_value:
+                    return 0
+
+            return component_value * len(indices)
+
+        for seq, indices in seq_to_idx.items():
+            if "_l" in seq:
+                total_score += calculate_score_for_sequence(indices, 1)  # Left component
+            elif "_d" in seq:
+                total_score += calculate_score_for_sequence(indices, 0)  # Vertical component
+            elif "_r" in seq:
+                total_score += calculate_score_for_sequence(indices, 2)  # Right component
+
+        return total_score
+

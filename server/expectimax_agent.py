@@ -1,4 +1,5 @@
 from game import Agent
+import game_state
 
 class Expectimax(Agent):
     def __init__(self, depth=3, evaluation_function=None):
@@ -47,3 +48,30 @@ class Expectimax(Agent):
     def default_evaluation_function(self, state):
         """Default evaluation function that returns the current score of the game state."""
         return state.score
+
+    def check_sequences(self, state):
+        empty_sequences = 0
+        broken_sequences = 0
+        partial_sequences = 0
+        for seq in game_state.seq_to_idx.values():
+            component_index = None
+            if "_l" in seq:
+                component_index = 2  # Right component
+            elif "_d" in seq:
+                component_index = 0  # Vertical component
+            elif "_r" in seq:
+                component_index = 1  # Left component
+
+            filtered_values = [state.board[t][component_index] for t in seq if state.board[t] is not None]
+            different_values = len(set(filtered_values))
+            if different_values > 1:
+                #every location belongs to 3 sequences
+                broken_sequences += len(seq)
+            elif different_values == 1:
+                partial_sequences += 1
+            elif len(filtered_values) == 0:
+                empty_sequences += 1
+
+        broken_sequences /= (3* game_state.DEFAULT_BOARD_SIZE)
+        empty_sequences /= len(game_state.seq_to_idx)
+        partial_sequences /= len(game_state.seq_to_idx)

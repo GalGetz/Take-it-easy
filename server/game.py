@@ -27,11 +27,17 @@ class Agent(object):
 
 
 class RandomOpponentAgent(Agent):
+    def __init__(self):
+        super().__init__()
+        self.rng = np.random.default_rng()  # Create a random number generator
+
     def get_action(self, game_state, tile=None):
         if not game_state.tiles:
             return Action.STOP
-        # Randomly choose an index from the sorted set
-        index = np.random.choice(len(game_state.tiles))
+
+        # Randomly choose an index from the sorted set using the random number generator
+        index = self.rng.choice(len(game_state.tiles))
+
         # Pop the tile from the sorted set at the chosen index
         tile = game_state.pop_random_tile(index)
         return tile

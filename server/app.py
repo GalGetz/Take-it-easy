@@ -20,7 +20,7 @@ class GameManager:
         self._opponent_agent = RandomOpponentAgent()
 
         # Initialize the game
-        self._game = Game(agent, self._opponent_agent)
+        self._game = Game(self._agent, self._opponent_agent)
         self._game.initialize(self._initial_state)
 
         # Prepare a list to store calculated turns

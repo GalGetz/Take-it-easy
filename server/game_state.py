@@ -1,7 +1,5 @@
 import copy
 from sortedcontainers import SortedSet
-import numpy as np
-from game import Action, OpponentAction
 
 # Global seq_to_idx dictionary (for scoring sequences)
 seq_to_idx = {

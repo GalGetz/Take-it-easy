@@ -8,6 +8,7 @@ import threading
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 
+manager = None
 class GameManager:
     def __init__(self, agent):
         # Initialize the game state

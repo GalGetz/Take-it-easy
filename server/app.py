@@ -14,7 +14,7 @@ class GameManager:
         self._initial_state = GameState()
 
         # Initialize the agents
-        self._agent = AgentFactory(agent)
+        self._agent = AgentFactory.create_agent(agent)
         self._opponent_agent = RandomOpponentAgent()
 
         # Initialize the game

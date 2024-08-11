@@ -92,7 +92,7 @@ def init_game():
     global manager
     manager = GameManager(data['agent'])
 
-    return 'OK', 200
+    return jsonify({'status': 'success', 'message': f'Game initialized with agent{data["agent"]}'})
 
 if __name__ == '__main__':
     app.run(debug=True)

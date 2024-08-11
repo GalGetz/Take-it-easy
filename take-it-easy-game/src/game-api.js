@@ -18,10 +18,12 @@ export const getAIPlacement = async () => {
   }
 };
 
-export const getAIScore = async () => {
+export const getScores = async (tiles) => {
   try {
-    const response = await axios.get('http://127.0.0.1:5000/agent_score');
-    return response.data.data;
+    const response = await axios.get('http://127.0.0.1:5000/scores', {
+      tiles,
+    });
+    return response.data;
   } catch (e) {
     console.error('There was an error fetching the score!', e);
   }

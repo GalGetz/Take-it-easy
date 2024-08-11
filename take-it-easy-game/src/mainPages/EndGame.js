@@ -29,14 +29,16 @@ const ScoreBox = styled(Box)(({ theme }) => ({
   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
 }));
 
-const EndGame = ({ playerScore, onRestart }) => {
+const EndGame = ({ playerScore, onRestart, playerTiles }) => {
   const [score, setScore] = useState(null);
+  const [playerScore, setPlayerScore] = useState(null);
 
   useEffect(() => {
     async function fetchScore() {
-      const aiScore = await getAIScore();
-      console.log(aiScore);
-      setScore(aiScore);
+      const response = await getScores(playerTiles);
+      console.log(response);
+      setScore(response.agent_score);
+      setPlayerScore(response.user_score);
     }
     fetchScore();
   }, []);

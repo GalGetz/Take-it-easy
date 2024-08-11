@@ -9,10 +9,10 @@ class AgentFactory:
         if agent_type_str == "Random":
             return RandomAgent()
         elif agent_type_str == "A-star":
-            return AStarAgent()
+            # return AStarAgent()
         elif agent_type_str == "RL":
-            return ReinforcementLearningAgent()
+            # return ReinforcementLearningAgent()
         elif agent_type_str == "Monte Carlo":
-            return MonteCarloAgent()
+            # return MonteCarloAgent()
         else:
             raise ValueError(f"Unknown agent type: {agent_type_str}")

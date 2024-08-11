@@ -10,10 +10,7 @@ import ContentAi from '../components/SelectAgent/ContentAi';
 
 const TILES_SUM = 19;
 
-export function GameFace({ onEndGame }) {
-  const [placedTiles, setPlacedTiles] = useState(
-    Array.from({ length: TILES_SUM }),
-  );
+export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
   const [placedAITiles, setPlacedAITiles] = useState(
     Array.from({ length: TILES_SUM }),
   );

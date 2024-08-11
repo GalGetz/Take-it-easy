@@ -1,4 +1,3 @@
-# AgentFactory class
 from server.random_agent import RandomAgent
 
 

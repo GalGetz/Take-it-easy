@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // import ScoreBoard from '../components/ScoreBoard';
 import '../styles.css';
-import { getAIPlacement, getCurrentTile } from '../game-api';
+import { getAIPlacement, getCurrentTile, chooseAiAgent } from '../game-api';
 import SelectAI from '../components/SelectAgent/SelectAI';
 import { Box, Button } from '@mui/material';
 import Board from '../components/Board';
@@ -21,14 +21,22 @@ export function GameFace({ onEndGame }) {
   const [currentTile, setCurrentTile] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
 
-  useEffect(() => {
-    async function fetchData() {
-      const current = await getCurrentTile();
-      console.log(current);
-      setCurrentTile(current);
-    }
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const current = await getCurrentTile();
+  //     console.log(current);
+  //     setCurrentTile(current);
+  //   }
+  //   fetchData();
+  // }, []);
+
+  const startGame = async () => {
+    await chooseAiAgent(agent);
+    setIsGameStarted(true);
+    const current = await getCurrentTile();
+    console.log(current);
+    setCurrentTile(current);
+  };
 
   const choosePlace = async (index) => {
     const tilesArr = Array.from(placedTiles);
@@ -65,7 +73,7 @@ export function GameFace({ onEndGame }) {
           <SelectAI agent={agent} setAgent={setAgent} />
           <Button
             variant="contained"
-            onClick={() => setIsGameStarted(true)}
+            onClick={() => startGame()}
             disabled={!agent}
           >
             Start Game

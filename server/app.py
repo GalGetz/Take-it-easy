@@ -20,7 +20,7 @@ class GameManager:
         self._opponent_agent = RandomOpponentAgent()
 
         # Initialize the game
-        self._game = Game(agent, self._opponent_agent)
+        self._game = Game(self._agent, self._opponent_agent)
         self._game.initialize(self._initial_state)
 
         # Prepare a list to store calculated turns
@@ -46,6 +46,13 @@ class GameManager:
                 return self.turns[self.user_turn_index]
             else:
                 return None, None
+
+    def get_agent_score(self):
+        return self._game._state.score()
+
+    def get_user_score(self, board):
+        return GameState.calculate_score(board)
+
 
 
 
@@ -77,12 +84,14 @@ def agent_location():
     manager.user_turn_index += 1
     return jsonify(response)
 
-@app.route('/agent_score', methods=['GET'])
+@app.route('/scores', methods=['GET'])
 def agent_score():
-    score = -1 # for tests
+    agent_score = manager.get_agent_score()
+    user_score = manager.get_user_score()
     response = {
         'status': 'success',
-        'data': score,
+        'agent_score': agent_score,
+        'user_score' : user_score
     }
     return jsonify(response)
 

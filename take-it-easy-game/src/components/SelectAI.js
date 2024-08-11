@@ -5,9 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-export default function BasicSelect() {
-  const [agent, setAgent] = React.useState('');
-
+export default function BasicSelect({ agent, setAgent }) {
   const handleChange = (event) => {
     setAgent(event.target.value);
   };
@@ -16,14 +14,10 @@ export default function BasicSelect() {
     <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Agent</InputLabel>
-        <Select
-          value={agent}
-          label="Agent"
-          onChange={handleChange}
-        >
-          <MenuItem value={10}>RL</MenuItem>
-          <MenuItem value={20}>A-star</MenuItem>
-          <MenuItem value={30}>Monte Carlo</MenuItem>
+        <Select value={agent} label="Agent" onChange={handleChange}>
+          <MenuItem value={'RL'}>RL</MenuItem>
+          <MenuItem value={'A-star'}>A-star</MenuItem>
+          <MenuItem value={'Monte Carlo'}>Monte Carlo</MenuItem>
         </Select>
       </FormControl>
     </Box>

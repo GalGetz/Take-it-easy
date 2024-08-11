@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -6,23 +6,12 @@ import {
   Container,
   Paper,
   Divider,
+  CircularProgress,
 } from '@mui/material';
+import { getAIScore } from '../game-api';
 import { styled } from '@mui/system';
-// import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import { lime, purple } from '@mui/material/colors';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-
-// const theme = createTheme({
-//   palette: {
-//     ochre: {
-//       main: '#E3D026',
-//       light: '#E9DB5D',
-//       dark: '#A29415',
-//       contrastText: '#242105',
-//     },
-//   },
-// });
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -40,11 +29,16 @@ const ScoreBox = styled(Box)(({ theme }) => ({
   boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
 }));
 
-const EndGame = ({ playerScore, aiScore, onRestart }) => {
+const EndGame = ({ playerScore, onRestart }) => {
+  const [score, setScore] = useState(null);
   const isPlayerWinner = playerScore > aiScore;
 
-  return (
-    // <ThemeProvider theme={theme}>
+  useEffect(async () => {
+    const aiScore = await getAIScore();
+    setScore(aiScore);
+  }, []);
+
+  return score ? (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
       <StyledPaper elevation={3}>
         <Box sx={{ mb: 4 }}>
@@ -98,7 +92,8 @@ const EndGame = ({ playerScore, aiScore, onRestart }) => {
         </Button>
       </StyledPaper>
     </Container>
-    // </ThemeProvider>
+  ) : (
+    <CircularProgress color="inherit" />
   );
 };
 

@@ -10,25 +10,18 @@ import {
 import HomePage from './HomePage';
 import EndGame from './EndGame';
 import { GameFace } from './GameFace';
-import { lime } from '@mui/material/colors';
 import '../styles.css';
-// import axios from 'axios';
 
 // const API_URL = 'http://127.0.0.1:5000';
 
 function App() {
-  const [playerScore, setPlayerScore] = useState(0);
-  const [aiScore, setAiScore] = useState(0);
-
   const navigate = useNavigate();
 
   const startGame = () => {
     navigate('/game');
   };
 
-  const endGame = (playerScore, aiScore) => {
-    setPlayerScore(playerScore);
-    setAiScore(aiScore);
+  const endGame = () => {
     navigate('/end');
   };
 
@@ -58,13 +51,7 @@ function App() {
         <Route path="/game" element={<GameFace onEndGame={endGame} />} />
         <Route
           path="/end"
-          element={
-            <EndGame
-              playerScore={playerScore}
-              aiScore={aiScore}
-              onRestart={restartGame}
-            />
-          }
+          element={<EndGame playerScore={70} onRestart={restartGame} />}
         />
       </Routes>
     </>

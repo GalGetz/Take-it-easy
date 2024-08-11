@@ -1,57 +1,64 @@
-import React, { useState } from 'react';
-import ScoreBoard from '../components/ScoreBoard';
+import React, { useState, useEffect } from 'react';
+// import ScoreBoard from '../components/ScoreBoard';
 import '../styles.css';
+import { getAIPlacement, getCurrentTile } from '../game-api';
 import SelectAI from '../components/SelectAI';
 import { Box, Button } from '@mui/material';
 import Board from '../components/Board';
 import TilePicker from '../components/TilePicker';
 
-const tiles = [];
-const iValues = [1, 5, 9];
-const jValues = [2, 6, 7];
-const kValues = [3, 4, 8];
+// const tiles = [];
+// const iValues = [1, 5, 9];
+// const jValues = [2, 6, 7];
+// const kValues = [3, 4, 8];
 
-for (const i of iValues) {
-  for (const j of jValues) {
-    for (const k of kValues) {
-      tiles.push([i, j, k]);
-    }
-  }
-}
+// for (const i of iValues) {
+//   for (const j of jValues) {
+//     for (const k of kValues) {
+//       tiles.push([i, j, k]);
+//     }
+//   }
+// }
 
 export function GameFace({ onEndGame }) {
   const [placedTiles, setPlacedTiles] = useState(Array.from({ length: 19 }));
-  const [restTiles, setRestTiles] = useState(tiles);
-  const [currentTile, setCurrentTile] = useState(() => {
-    const randomIndex = Math.floor(Math.random() * restTiles.length);
-    const tile = restTiles[randomIndex];
-    const tilesArr = Array.from(restTiles);
-    tilesArr.splice(randomIndex, 1);
-    setRestTiles(tilesArr);
+  const [placedAITiles, setPlacedAITiles] = useState(
+    Array.from({ length: 19 }),
+  );
+  // const [restTiles, setRestTiles] = useState(tiles);
+  const [agent, setAgent] = React.useState('');
+  const [currentTile, setCurrentTile] = useState(null);
 
-    return tile;
-  });
+  // const pickRandomTile = () => {
+  //   const randomIndex = Math.floor(Math.random() * restTiles.length);
+  //   const tile = restTiles[randomIndex];
+  //   const tilesArr = Array.from(restTiles);
+  //   tilesArr.splice(randomIndex, 1);
+  //   setRestTiles(tilesArr);
+  //   return tile;
+  // };
 
-  const pickRandomTile = () => {
-    const randomIndex = Math.floor(Math.random() * restTiles.length);
-    const tile = restTiles[randomIndex];
-    const tilesArr = Array.from(restTiles);
-    tilesArr.splice(randomIndex, 1);
-    setRestTiles(tilesArr);
-    return tile;
-  };
+  useEffect(async () => {
+    const current = getCurrentTile();
+    setCurrentTile(current);
+  }, []);
 
-  const choosePlace = (index) => {
+  const choosePlace = async (index) => {
     const tilesArr = Array.from(placedTiles);
     tilesArr[index] = currentTile;
     setPlacedTiles(tilesArr);
-    setCurrentTile(pickRandomTile());
+
+    const AItilesArr = Array.from(placedAITiles);
+    const AIindex = await getAIPlacement();
+    AItilesArr[AIindex] = currentTile;
+    setPlacedAITiles(AItilesArr);
+
+    const current = await getCurrentTile();
+    setCurrentTile(current);
   };
 
   const endGameRender = () => {
-    const playerScore = Math.floor(Math.random() * 100);
-    const aiScore = Math.floor(Math.random() * 100); // Placeholder for AI score calculation
-    onEndGame(playerScore, aiScore);
+    onEndGame();
     return null;
   };
 
@@ -65,35 +72,32 @@ export function GameFace({ onEndGame }) {
           justifyContent: 'space-between',
         }}
       >
-        <SelectAI />
+        <SelectAI agent={agent} setAgent={setAgent} />
         <Button variant="contained">Start Game</Button>
       </Box>
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          width: '50%',
+          width: '70%',
           justifyContent: 'space-between',
           marginTop: '30px',
-          marginRight: '250px',
+          marginRight: '150px',
+          gap: '20px',
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            height: '100%',
-            gap: '30px',
-          }}
-        >
-          <ScoreBoard />
+        <Board
+          title={'Your Board'}
+          onChoose={choosePlace}
+          placedTiles={placedTiles}
+        />
+        <Box>
           <TilePicker currentTile={currentTile} />
         </Box>
         <Board
-          onChoose={choosePlace}
-          currentTile={currentTile}
-          placedTiles={placedTiles}
+          title={`${agent} Board`}
+          onChoose={() => {}}
+          placedTiles={placedAITiles}
         />
       </Box>
     </div>

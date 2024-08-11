@@ -1,11 +1,10 @@
-import json
-
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify 
 from flask_cors import CORS
 from game import Game, RandomOpponentAgent
 from game_state import GameState
 from agent_factory import AgentFactory
 import threading
+import json
 
 app = Flask(__name__)
 # Configure CORS to allow requests from your client

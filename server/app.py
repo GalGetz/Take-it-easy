@@ -6,7 +6,8 @@ from agent_factory import AgentFactory
 import threading
 
 app = Flask(__name__)
-CORS(app)  # This will enable CORS for all routes
+# Configure CORS to allow requests from your client
+cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 manager = None
 class GameManager:
@@ -92,7 +93,7 @@ def init_game():
     global manager
     manager = GameManager(data['agent'])
 
-    return 'OK', 200
+    return jsonify({'status': 'success', 'message': f'Game initialized with agent{data["agent"]}'})
 
 if __name__ == '__main__':
     app.run(debug=True)

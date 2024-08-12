@@ -1,5 +1,6 @@
 from game import Agent, Action, PlacementAction
 import game_state
+import numpy as np
 
 
 class Expectimax(Agent):
@@ -53,9 +54,13 @@ class Expectimax(Agent):
         return state.score - broken_sequences*10 + empty_sequences*10 + partial_sequences*10
 
     def check_sequences(self, state):
+        num_to_seq = np.zeros(9, dtype=int)
         empty_sequences = 0
         broken_sequences = 0
         partial_sequences = 0
+        total_sum = 0
+        # duplicated_seqs = 0
+
         for seq, index in game_state.seq_to_idx.items():
             component_index = None
             if "_l" in seq:
@@ -65,18 +70,36 @@ class Expectimax(Agent):
             elif "_r" in seq:
                 component_index = 1  # Left component
 
-            filtered_values = [state.board[t][component_index] for t in index if state.board[t] is not None]
-            different_values = len(set(filtered_values))
+            mask = state.board[index] is not None
+            filtered_values = state.board[index][mask, component_index]
+            sum_values = np.sum(filtered_values)
+            total_sum += sum_values
+            unique_values = np.unique(filtered_values)
+            different_values = unique_values.size
+            num_to_seq[unique_values] += 1
+
+            # sum_values = 0
+            # unique_values = set()
+            # for t in index:
+            #     if state.board[t] is not None:
+            #         # sum_values += state.board[t][component_index]
+            #         unique_values.add(state.board[t][component_index])
+            #         num_to_seq[state.board[t][component_index]] += 1
+            #
+            # # total_sum += sum_values
+            # different_values = len(unique_values)
+
             if different_values > 1:
-                #every location belongs to 3 sequences
-                broken_sequences += len(seq)
+                broken_sequences += sum_values
             elif different_values == 1:
                 partial_sequences += 1
-            elif len(filtered_values) == 0:
+            elif different_values == 0:
                 empty_sequences += 1
+            # duplicated_seqs += sum(i*num_to_seq[i] for i in range(10))
 
-        broken_sequences /= (3* game_state.DEFAULT_BOARD_SIZE)
+        broken_sequences /= total_sum
         empty_sequences /= len(game_state.seq_to_idx)
         partial_sequences /= len(game_state.seq_to_idx)
+        duplicated_seqs = np.sum(np.arange(1,10)* num_to_seq)
 
-        return broken_sequences,empty_sequences, partial_sequences
+        return broken_sequences, empty_sequences, partial_sequences, duplicated_seqs

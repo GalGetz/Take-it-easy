@@ -1,5 +1,6 @@
 import copy
 from sortedcontainers import SortedSet
+import numpy as np
 
 # Global seq_to_idx dictionary (for scoring sequences)
 seq_to_idx = {
@@ -56,7 +57,7 @@ class GameState:
         if board is None:
             board = [None] * DEFAULT_BOARD_SIZE
 
-        self._board = board
+        self._board = np.array(board)
 
         # Initialize remaining tiles as a SortedSet if not provided
         if remaining_tiles is None:

@@ -40,7 +40,8 @@ class GameManager:
             # with self.lock:
                 # Calculate the next turn
             self._curr_tile = self._game.current_tile()
-            self._agent_loc = self._game.agent_location(self._curr_tile)
+            self._agent_loc = self._game.agent_location()
+
             self.turns.append((self._curr_tile, self._agent_loc))
             print(f"calculated move {t}")
             t += 1
@@ -51,7 +52,6 @@ class GameManager:
 
             return self.turns[self.user_turn_index]
         else:
-            print("Not calculated yet")
             return None, None
 
     def get_agent_score(self):

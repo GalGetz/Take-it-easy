@@ -56,7 +56,7 @@ class Expectimax(Agent):
         empty_sequences = 0
         broken_sequences = 0
         partial_sequences = 0
-        for seq in game_state.seq_to_idx.values():
+        for seq, index in game_state.seq_to_idx.items():
             component_index = None
             if "_l" in seq:
                 component_index = 2  # Right component
@@ -65,7 +65,7 @@ class Expectimax(Agent):
             elif "_r" in seq:
                 component_index = 1  # Left component
 
-            filtered_values = [state.board[t][component_index] for t in seq if state.board[t] is not None]
+            filtered_values = [state.board[t][component_index] for t in index if state.board[t] is not None]
             different_values = len(set(filtered_values))
             if different_values > 1:
                 #every location belongs to 3 sequences

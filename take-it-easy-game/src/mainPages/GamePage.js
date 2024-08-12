@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles.css';
 import { getAIPlacement, getCurrentTile, chooseAiAgent } from '../game-api';
 import SelectAI from '../components/SelectAgent/SelectAI';
-import { Box, Button } from '@mui/material';
+import { Box, Button, CircularProgress } from '@mui/material';
 import Board from '../components/Board';
 import TilePicker from '../components/TilePicker';
 import ContentAi from '../components/SelectAgent/ContentAi';
@@ -17,6 +17,7 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
   const [agent, setAgent] = useState('');
   const [currentTile, setCurrentTile] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // useEffect(() => {
   //   async function fetchData() {
@@ -28,11 +29,13 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
   // }, []);
 
   const startGame = async () => {
+    setLoading(true);
     await chooseAiAgent(agent);
     setIsGameStarted(true);
     const current = await getCurrentTile();
     console.log(current);
     setCurrentTile(current);
+    setLoading(false);
   };
 
   const choosePlace = async (index) => {
@@ -83,31 +86,35 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
   const ongoingGameRender = () => (
     <div className="AppContainer">
       {isGameStarted ? (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            width: '70%',
-            justifyContent: 'space-between',
-            marginTop: '30px',
-            marginRight: '150px',
-            gap: '20px',
-          }}
-        >
-          <Board
-            title={'Your Board'}
-            onChoose={choosePlace}
-            placedTiles={placedTiles}
-          />
-          <Box>
-            <TilePicker currentTile={currentTile} />
+        loading ? (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '70%',
+              justifyContent: 'space-between',
+              marginTop: '30px',
+              marginRight: '150px',
+              gap: '20px',
+            }}
+          >
+            <Board
+              title={'Your Board'}
+              onChoose={choosePlace}
+              placedTiles={placedTiles}
+            />
+            <Box>
+              <TilePicker currentTile={currentTile} />
+            </Box>
+            <Board
+              title={`${agent} Board`}
+              onChoose={() => {}}
+              placedTiles={placedAITiles}
+            />
           </Box>
-          <Board
-            title={`${agent} Board`}
-            onChoose={() => {}}
-            placedTiles={placedAITiles}
-          />
-        </Box>
+        ) : (
+          <CircularProgress />
+        )
       ) : (
         agentChooseRender()
       )}

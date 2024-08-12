@@ -41,6 +41,7 @@ class GameManager:
                 # Calculate the next turn
             self._curr_tile = self._game.current_tile()
             self._agent_loc = self._game.agent_location()
+
             self.turns.append((self._curr_tile, self._agent_loc))
             print(f"calculated move {t}")
             t += 1

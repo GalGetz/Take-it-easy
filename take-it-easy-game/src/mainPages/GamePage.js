@@ -43,12 +43,14 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
     const tilesArr = Array.from(placedTiles);
     tilesArr[index] = currentTile;
     setPlacedTiles(tilesArr);
+
     const AItilesArr = Array.from(placedAITiles);
     setLoaderTurn(true);
     const AIindex = await getAIPlacement();
     console.log(AIindex);
     AItilesArr[AIindex] = currentTile;
     setPlacedAITiles(AItilesArr);
+
     const current = await getCurrentTile();
     console.log(current);
     setCurrentTile(current);
@@ -57,7 +59,6 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
 
   const endGameRender = () => {
     onEndGame();
-    return null;
   };
 
   const agentChooseRender = () => {

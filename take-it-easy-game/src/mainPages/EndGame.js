@@ -44,7 +44,7 @@ const EndGame = ({ onRestart, playerTiles }) => {
     fetchScore();
   }, []);
 
-  return playerScore ? (
+  return playerScore === null ? (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
       <StyledPaper elevation={3}>
         <Box sx={{ mb: 4 }}>

@@ -1,6 +1,7 @@
 from game import Agent, Action, PlacementAction
 import game_state
 
+
 class Expectimax(Agent):
     def __init__(self, depth=3, evaluation_function=None):
         super(Expectimax, self).__init__()

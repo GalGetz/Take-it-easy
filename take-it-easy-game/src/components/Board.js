@@ -32,7 +32,7 @@ function Board({ title, onChoose, placedTiles, loaderTurn }) {
               <Tile
                 index={tileIndex}
                 values={placedTiles[tileIndex - 1]}
-                onClick={loaderTurn ? undefined : onChoose}
+                onClick={loaderTurn ? () => {} : onChoose}
               />
             </div>
           );

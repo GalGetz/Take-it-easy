@@ -35,7 +35,6 @@ const EndGame = ({ onRestart, playerTiles }) => {
 
   useEffect(() => {
     async function fetchScore() {
-      console.log(playerTiles);
       const response = await getScores(playerTiles);
       console.log(response);
       setScore(response.agent_score);
@@ -44,7 +43,7 @@ const EndGame = ({ onRestart, playerTiles }) => {
     fetchScore();
   }, []);
 
-  return playerScore === null ? (
+  return playerScore !== null ? (
     <Container maxWidth="sm" sx={{ mt: 5 }}>
       <StyledPaper elevation={3}>
         <Box sx={{ mb: 4 }}>

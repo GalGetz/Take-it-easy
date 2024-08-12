@@ -15,6 +15,7 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
     Array.from({ length: TILES_SUM }),
   );
   const [agent, setAgent] = useState('');
+  const [loaderTurn, setLoaderTurn] = useState(false);
   const [currentTile, setCurrentTile] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,16 +43,16 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
     const tilesArr = Array.from(placedTiles);
     tilesArr[index] = currentTile;
     setPlacedTiles(tilesArr);
-
     const AItilesArr = Array.from(placedAITiles);
+    setLoaderTurn(true);
     const AIindex = await getAIPlacement();
     console.log(AIindex);
     AItilesArr[AIindex] = currentTile;
     setPlacedAITiles(AItilesArr);
-
     const current = await getCurrentTile();
     console.log(current);
     setCurrentTile(current);
+    setLoaderTurn(false);
   };
 
   const endGameRender = () => {
@@ -86,7 +87,7 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
   const ongoingGameRender = () => (
     <div className="AppContainer">
       {isGameStarted ? (
-        loading ? (
+        !loading ? (
           <Box
             sx={{
               display: 'flex',
@@ -102,14 +103,15 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
               title={'Your Board'}
               onChoose={choosePlace}
               placedTiles={placedTiles}
+              loaderTurn
             />
             <Box>
-              <TilePicker currentTile={currentTile} />
+              <TilePicker currentTile={currentTile} loaderTurn />
             </Box>
             <Board
               title={`${agent} Board`}
-              onChoose={() => {}}
               placedTiles={placedAITiles}
+              loaderTurn={true}
             />
           </Box>
         ) : (

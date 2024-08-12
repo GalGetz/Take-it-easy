@@ -16,7 +16,7 @@ const boardLayout = [
   [0, 0, 1, 0, 0],
 ];
 
-function Board({ title, onChoose, placedTiles }) {
+function Board({ title, onChoose, placedTiles, loaderTurn }) {
   let tileIndex = 0;
   return (
     <Box align="center">
@@ -32,7 +32,7 @@ function Board({ title, onChoose, placedTiles }) {
               <Tile
                 index={tileIndex}
                 values={placedTiles[tileIndex - 1]}
-                onClick={onChoose}
+                onClick={loaderTurn ? undefined : onChoose}
               />
             </div>
           );

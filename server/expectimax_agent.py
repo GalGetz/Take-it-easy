@@ -70,8 +70,11 @@ class Expectimax(Agent):
             elif "_r" in seq:
                 component_index = 1  # Left component
 
-            mask = state.board[index][state.board[index] is not None]
+            # print("board", state.board[index])
+            mask = ~np.isnan(state.board[index])
+            print("mask", mask)
             filtered_values = mask[:, component_index]
+            print("filtered_values", filtered_values)
             sum_values = np.sum(filtered_values)
             total_sum += sum_values
             unique_values = np.unique(filtered_values)

@@ -55,7 +55,7 @@ class GameState:
 
         # Initialize the board as a list of 19 None elements if not provided
         if board is None:
-            board = [None] * DEFAULT_BOARD_SIZE
+            board = [np.nan] * DEFAULT_BOARD_SIZE
 
         self._board = np.array(board)
 
@@ -73,7 +73,7 @@ class GameState:
         for i in i_values:
             for j in j_values:
                 for k in k_values:
-                    tiles.append([i, j, k])  # Use tuples to store tiles
+                    tiles.append((i, j, k))  # Use tuples to store tiles
         return tiles
 
     def pop_random_tile(self, index):
@@ -132,7 +132,7 @@ class GameState:
             raise Exception("Illegal action: Tile placement on an already occupied spot.")
 
         # Place the tile on the board
-        self._board[idx] = tile
+        self._board[idx] = np.array(tile) if tile is not None else np.nan
 
         # Incrementally update the score
         self.update_score(idx, tile)

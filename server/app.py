@@ -27,10 +27,11 @@ class GameManager:
         self.turns = []
         self.lock = threading.Lock()
         self.user_turn_index = 0
-
+        print("start threads")
         # Start the background thread to calculate agent moves
         self.thread = threading.Thread(target=self.calculate_moves)
         self.thread.start()
+        print("finished init")
 
     def calculate_moves(self):
         t = 0
@@ -38,6 +39,8 @@ class GameManager:
             self._curr_tile = self._game.current_tile()
             self._agent_loc = self._game.agent_location()
             self.turns.append((self._curr_tile, self._agent_loc))
+            print((self._curr_tile, self._agent_loc))
+            print("computed ",t)
             t += 1
 
     def get_turn(self):
@@ -59,6 +62,7 @@ def init_game():
 
     global manager
     manager = GameManager(data['agent'])
+    print(data["agent"])
 
     return jsonify({'status': 'success', 'message': f'Game initialized with agent{data["agent"]}'})
 
@@ -99,8 +103,8 @@ def scores():
     user_score = manager.get_user_score(board)
     response = {
         'status': 'success',
-        'agent_score': agent_score,
-        'user_score' : user_score
+        'agent_score': int(agent_score),
+        'user_score' : int(user_score)
     }
     return jsonify(response)
 

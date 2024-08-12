@@ -77,6 +77,7 @@ class Game:
 
         # The main agent decides where to place the selected tile
         action = self.agent.get_action(self._state)
+        print(action)
         if action == Action.STOP:
             return None
 

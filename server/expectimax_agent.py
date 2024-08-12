@@ -1,3 +1,5 @@
+import itertools
+
 from game import Agent, Action, PlacementAction
 import game_state
 import numpy as np
@@ -32,10 +34,14 @@ class Expectimax(Agent):
                         best_action = action
                 return best_action if depth == 0 else best_value
             else:  # Opponent's turn (expectation of random tile draw)
-                legal_actions = state.get_opponent_legal_actions()
+                legal_actions = np.array(state.get_opponent_legal_actions())
                 total_value = 0
-                num_actions = len(legal_actions)
-                for tile in legal_actions:
+                num_actions = np.minimum(10,len(legal_actions))
+                tiles_indexes = np.random.choice(len(legal_actions), size=num_actions, replace=False)
+                tiles = legal_actions[tiles_indexes]
+                # legal = list(itertools.permutations(legal_actions))[:10] if len(legal_actions) > 10 else legal_actions
+                for tile in tiles:
+                    # tile = legal_actions[np.random(len(legal_actions))]
                     successor = state.generate_successor(1, None)
                     successor.apply_opponent_action(tile)
                     value = expectimax(successor, depth + 1, 0)
@@ -50,18 +56,20 @@ class Expectimax(Agent):
     def default_evaluation_function(self, state):
         """Default evaluation function that returns the current score of the game state."""
 
-        broken_sequences, empty_sequences, partial_sequences = self.check_sequences(state)
-        return state.score - broken_sequences*10 + empty_sequences*10 + partial_sequences*10
+        broken_sequences, empty_sequences, partial_sequences, duplicated_seqs = self.check_sequences(state)
+        return state.score - broken_sequences*10 + empty_sequences*10 + partial_sequences*10 - duplicated_seqs
 
     def check_sequences(self, state):
+        # return 10, 10 , 10 ,10
         num_to_seq = np.zeros(9, dtype=int)
         empty_sequences = 0
         broken_sequences = 0
         partial_sequences = 0
         total_sum = 0
         # duplicated_seqs = 0
-
+        # print("*")
         for seq, index in game_state.seq_to_idx.items():
+            # print(seq)
             component_index = None
             if "_l" in seq:
                 component_index = 2  # Right component
@@ -70,13 +78,23 @@ class Expectimax(Agent):
             elif "_r" in seq:
                 component_index = 1  # Left component
 
-            mask = state.board[index] is not None
-            filtered_values = state.board[index][mask, component_index]
-            sum_values = np.sum(filtered_values)
+            # print(f"board index {state.board[index]}")
+            # print(f"index: {index}")
+            # mask = np.where(np.array(state.board[index]) != None)
+            mask = ~np.isnan(state.board[index][:,0])
+            # print(mask, "mask")
+            filtered_list = state.board[index][mask][:, component_index].astype(int)
+            # print(filtered_list, "filtered")
+            # np.array([x for x in state.board[index] if x is not None]))
+            # print(f"mask: {mask}")
+            # filtered_values = state.board[index][mask][:, component_index]
+            sum_values = np.sum(filtered_list)
             total_sum += sum_values
-            unique_values = np.unique(filtered_values)
+            unique_values = np.unique(filtered_list)
             different_values = unique_values.size
-            num_to_seq[unique_values] += 1
+            if different_values > 0:
+                # print(unique_values, "unique")
+                num_to_seq[unique_values -1] += 1
 
             # sum_values = 0
             # unique_values = set()

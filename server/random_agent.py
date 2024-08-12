@@ -2,7 +2,7 @@ import numpy as np
 from game import Agent, PlacementAction, Action
 
 class RandomAgent(Agent):
-    def get_action(self, game_state, tile):
+    def get_action(self, game_state):
         # Get all legal actions (available positions) on the board
         empty_tiles = game_state.get_legal_actions(0)
 

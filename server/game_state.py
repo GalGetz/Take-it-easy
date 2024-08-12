@@ -55,7 +55,7 @@ class GameState:
 
         # Initialize the board as a list of 19 None elements if not provided
         if board is None:
-            board = [None] * DEFAULT_BOARD_SIZE
+            board = [np.array([np.nan, np.nan, np.nan])] * DEFAULT_BOARD_SIZE
 
         self._board = np.array(board)
 
@@ -115,30 +115,30 @@ class GameState:
 
     def get_agent_legal_actions(self):
         # Legal actions are the indices on the board that are still None
-        return [i for i, tile in enumerate(self._board) if tile is None]
+        return [i for i, tile in enumerate(self._board) if np.isnan(tile[0]) ]
 
     def get_opponent_legal_actions(self):
         return list(self._tiles)
 
     def get_empty_tiles(self):
         # Returns the indices of all empty tiles on the board
-        return [i for i, tile in enumerate(self._board) if tile is None]
+        return [i for i, tile in enumerate(self._board) if np.isnan(tile[0])]
 
     def apply_action(self, action):
         idx = action.index
         tile = self._current_tile  # Use the current tile stored in the state
 
-        if self._board[idx] is not None:
+        if not np.isnan(self._board[idx][0]):
             raise Exception("Illegal action: Tile placement on an already occupied spot.")
 
         # Place the tile on the board
-        self._board[idx] = tile
+        self._board[idx] = np.array(tile) if not np.isnan(tile[0]) else tile
 
         # Incrementally update the score
         self.update_score(idx, tile)
 
         # If no empty spots are left, the game is done
-        if all(t is not None for t in self._board):
+        if all(not np.isnan(t[0]) for t in self._board):
             self._done = True
 
     def update_score(self, idx, tile):
@@ -146,13 +146,13 @@ class GameState:
 
         def calculate_score(indices, component_index):
             first_tile = self._board[indices[0]]
-            if first_tile is None or first_tile[component_index] != tile[component_index]:
+            if np.isnan(first_tile[0]) or first_tile[component_index] != tile[component_index]:
                 return 0
 
             component_value = first_tile[component_index]
             for sub_idx in indices[1:]:
                 current_tile = self._board[sub_idx]
-                if current_tile is None or current_tile[component_index] != component_value:
+                if  np.isnan(current_tile[0]) or current_tile[component_index] != component_value:
                     return 0
 
             return component_value * len(indices)
@@ -188,7 +188,7 @@ class GameState:
         """
         Applies the opponent's action by taking the selected tile and allowing the agent to place it.
         """
-        if not selected_tile:
+        if np.isnan(selected_tile[0]):
             raise Exception("No tile was selected by the opponent.")
 
         # Set the current tile in the state
@@ -209,13 +209,13 @@ class GameState:
 
         def calculate_score_for_sequence(indices, component_index):
             first_tile = board[indices[0]]
-            if first_tile is None:
+            if  np.isnan(first_tile[0]):
                 return 0
 
             component_value = first_tile[component_index]
             for idx in indices[1:]:
                 tile = board[idx]
-                if tile is None or tile[component_index] != component_value:
+                if np.isnan(tile[0]) or tile[component_index] != component_value:
                     return 0
 
             return component_value * len(indices)

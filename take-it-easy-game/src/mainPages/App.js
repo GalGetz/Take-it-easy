@@ -30,6 +30,7 @@ function App() {
   };
 
   const restartGame = () => {
+    setPlacedTiles(Array.from({ length: TILES_SUM }));
     navigate('/');
   };
 

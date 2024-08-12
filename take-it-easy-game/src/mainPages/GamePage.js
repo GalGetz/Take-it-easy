@@ -43,16 +43,15 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
     const tilesArr = Array.from(placedTiles);
     tilesArr[index] = currentTile;
     setPlacedTiles(tilesArr);
+    //console.log
 
     const AItilesArr = Array.from(placedAITiles);
     setLoaderTurn(true);
     const AIindex = await getAIPlacement();
-    console.log(AIindex);
     AItilesArr[AIindex] = currentTile;
     setPlacedAITiles(AItilesArr);
 
     const current = await getCurrentTile();
-    console.log(current);
     setCurrentTile(current);
     setLoaderTurn(false);
   };
@@ -104,10 +103,10 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
               title={'Your Board'}
               onChoose={choosePlace}
               placedTiles={placedTiles}
-              loaderTurn
+              loaderTurn={loaderTurn}
             />
             <Box>
-              <TilePicker currentTile={currentTile} loaderTurn />
+              <TilePicker currentTile={currentTile} loaderTurn={loaderTurn} />
             </Box>
             <Board
               title={`${agent} Board`}

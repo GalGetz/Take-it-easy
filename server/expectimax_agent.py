@@ -50,8 +50,8 @@ class Expectimax(Agent):
     def default_evaluation_function(self, state):
         """Default evaluation function that returns the current score of the game state."""
 
-        broken_sequences, empty_sequences, partial_sequences = self.check_sequences(state)
-        return state.score - broken_sequences*10 + empty_sequences*10 + partial_sequences*10
+        broken_sequences, empty_sequences, partial_sequences, duplicated_seqs = self.check_sequences(state)
+        return state.score - broken_sequences*10 + empty_sequences*10 + partial_sequences*10 - duplicated_seqs
 
     def check_sequences(self, state):
         num_to_seq = np.zeros(9, dtype=int)
@@ -70,8 +70,8 @@ class Expectimax(Agent):
             elif "_r" in seq:
                 component_index = 1  # Left component
 
-            mask = state.board[index] is not None
-            filtered_values = state.board[index][mask, component_index]
+            mask = state.board[index][state.board[index] is not None]
+            filtered_values = mask[:, component_index]
             sum_values = np.sum(filtered_values)
             total_sum += sum_values
             unique_values = np.unique(filtered_values)

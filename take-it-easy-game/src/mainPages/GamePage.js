@@ -43,6 +43,7 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
     const tilesArr = Array.from(placedTiles);
     tilesArr[index] = currentTile;
     setPlacedTiles(tilesArr);
+    //console.log
 
     const AItilesArr = Array.from(placedAITiles);
     setLoaderTurn(true);

@@ -86,44 +86,42 @@ export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
   const ongoingGameRender = () => (
     <div className="AppContainer">
       {isGameStarted ? (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            width: '70%',
-            justifyContent: 'space-between',
-            marginTop: '30px',
-            marginRight: '150px',
-            gap: '20px',
-          }}
-        >
-          <Board
-            title={'Your Board'}
-            onChoose={choosePlace}
-            placedTiles={placedTiles}
-          />
-          <Box>
-            <TilePicker currentTile={currentTile} />
+        loading ? (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '70%',
+              justifyContent: 'space-between',
+              marginTop: '30px',
+              marginRight: '150px',
+              gap: '20px',
+            }}
+          >
+            <Board
+              title={'Your Board'}
+              onChoose={choosePlace}
+              placedTiles={placedTiles}
+            />
+            <Box>
+              <TilePicker currentTile={currentTile} />
+            </Box>
+            <Board
+              title={`${agent} Board`}
+              onChoose={() => {}}
+              placedTiles={placedAITiles}
+            />
           </Box>
-          <Board
-            title={`${agent} Board`}
-            onChoose={() => {}}
-            placedTiles={placedAITiles}
-          />
-        </Box>
+        ) : (
+          <CircularProgress />
+        )
       ) : (
         agentChooseRender()
       )}
     </div>
   );
 
-  return loading ? (
-    placedTiles.some((element) => element === undefined) ? (
-      ongoingGameRender()
-    ) : (
-      endGameRender()
-    )
-  ) : (
-    <CircularProgress />
-  );
+  return placedTiles.some((element) => element === undefined)
+    ? ongoingGameRender()
+    : endGameRender();
 }

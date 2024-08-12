@@ -7,7 +7,6 @@ import threading
 import json
 
 app = Flask(__name__)
-# Configure CORS to allow requests from your client
 cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 manager = None
@@ -34,22 +33,15 @@ class GameManager:
         self.thread.start()
 
     def calculate_moves(self):
-        print("calculate moves")
         t = 0
         while t < 19:
-            # with self.lock:
-                # Calculate the next turn
             self._curr_tile = self._game.current_tile()
             self._agent_loc = self._game.agent_location()
-
             self.turns.append((self._curr_tile, self._agent_loc))
-            print(f"calculated move {t}")
             t += 1
 
     def get_turn(self):
-        # with self.lock:
         if self.user_turn_index < len(self.turns):
-
             return self.turns[self.user_turn_index]
         else:
             return None, None
@@ -61,7 +53,14 @@ class GameManager:
         return GameState.calculate_score(board)
 
 
+@app.route('/init_game', methods=['POST'])
+def init_game():
+    data = request.get_json()
 
+    global manager
+    manager = GameManager(data['agent'])
+
+    return jsonify({'status': 'success', 'message': f'Game initialized with agent{data["agent"]}'})
 
 
 @app.route('/current_tile', methods=['GET'])
@@ -76,6 +75,7 @@ def current_tile():
         'data': tile,
     }
     return jsonify(response)
+
 
 @app.route('/agent_location', methods=['GET'])
 def agent_location():
@@ -104,14 +104,7 @@ def scores():
     }
     return jsonify(response)
 
-@app.route('/init_game', methods=['POST'])
-def init_game():
-    data = request.get_json()
 
-    global manager
-    manager = GameManager(data['agent'])
-
-    return jsonify({'status': 'success', 'message': f'Game initialized with agent{data["agent"]}'})
 
 if __name__ == '__main__':
     app.run(debug=True)

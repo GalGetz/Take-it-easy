@@ -73,7 +73,7 @@ class GameState:
         for i in i_values:
             for j in j_values:
                 for k in k_values:
-                    tiles.append((i, j, k))  # Use tuples to store tiles
+                    tiles.append([i, j, k])  # Use tuples to store tiles
         return tiles
 
     def pop_random_tile(self, index):

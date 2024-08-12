@@ -222,10 +222,10 @@ class GameState:
 
         for seq, indices in seq_to_idx.items():
             if "_l" in seq:
-                total_score += calculate_score_for_sequence(indices, 1)  # Left component
+                total_score += calculate_score_for_sequence(indices, 2)  # Left component
             elif "_d" in seq:
                 total_score += calculate_score_for_sequence(indices, 0)  # Vertical component
             elif "_r" in seq:
-                total_score += calculate_score_for_sequence(indices, 2)  # Right component
+                total_score += calculate_score_for_sequence(indices, 1)  # Right component
 
         return total_score

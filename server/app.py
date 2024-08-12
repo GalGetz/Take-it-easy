@@ -34,19 +34,24 @@ class GameManager:
         self.thread.start()
 
     def calculate_moves(self):
-        while True:
-            with self.lock:
+        print("calculate moves")
+        t = 0
+        while t < 19:
+            # with self.lock:
                 # Calculate the next turn
-                self._curr_tile = self._game.current_tile()
-                self._agent_loc = self._game.agent_location(self._curr_tile)
-                self.turns.append((self._curr_tile, self._agent_loc))
+            self._curr_tile = self._game.current_tile()
+            self._agent_loc = self._game.agent_location()
+            self.turns.append((self._curr_tile, self._agent_loc))
+            print(f"calculated move {t}")
+            t += 1
 
     def get_turn(self):
-        with self.lock:
-            if self.user_turn_index < len(self.turns):
-                return self.turns[self.user_turn_index]
-            else:
-                return None, None
+        # with self.lock:
+        if self.user_turn_index < len(self.turns):
+
+            return self.turns[self.user_turn_index]
+        else:
+            return None, None
 
     def get_agent_score(self):
         return self._game._state.score

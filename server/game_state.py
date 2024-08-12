@@ -46,10 +46,11 @@ idx_to_seq = [
 DEFAULT_BOARD_SIZE = 19  # We now represent the board as a list of 19 elements
 
 class GameState:
-    def __init__(self, board=None, score=0, done=False, remaining_tiles=None):
+    def __init__(self, board=None, score=0, done=False, remaining_tiles=None, current_tile=None):
         super(GameState, self).__init__()
         self._done = done
         self._score = score
+        self._current_tile = current_tile  # Store the current tile in the state
 
         # Initialize the board as a list of 19 None elements if not provided
         if board is None:
@@ -96,6 +97,13 @@ class GameState:
     def tiles(self):
         return self._tiles
 
+    @property
+    def current_tile(self):
+        return self._current_tile
+
+    def set_current_tile(self, tile):
+        self._current_tile = tile
+
     def get_legal_actions(self, agent_index=0):
         if agent_index == 0:
             return self.get_agent_legal_actions()
@@ -117,7 +125,7 @@ class GameState:
 
     def apply_action(self, action):
         idx = action.index
-        tile = action.tile
+        tile = self._current_tile  # Use the current tile stored in the state
 
         if self._board[idx] is not None:
             raise Exception("Illegal action: Tile placement on an already occupied spot.")
@@ -155,30 +163,35 @@ class GameState:
         for seq in sequences:
             component_index = None
             if "_l" in seq:
-                component_index = 1  # Left component
+                component_index = 2  # Right component
             elif "_d" in seq:
                 component_index = 0  # Vertical component
             elif "_r" in seq:
-                component_index = 2  # Right component
+                component_index = 1  # Left component
 
             # Add the score for this sequence
             self._score += calculate_score(seq_to_idx[seq], component_index)
 
     def generate_successor(self, agent_index=0, action=None):
         successor = GameState(board=copy.deepcopy(self._board), score=self._score, done=self._done,
-                              remaining_tiles=self._tiles.copy())  # Use copy() for SortedSet
+                              remaining_tiles=self._tiles.copy(), current_tile=self._current_tile)  # Pass the current tile to the successor
         if agent_index == 0:
             successor.apply_action(action)
         elif agent_index == 1:
-            successor.apply_opponent_action(action)
+            successor.apply_opponent_action(self._current_tile)
         else:
             raise Exception("Illegal agent index.")
         return successor
 
-    def apply_opponent_action(self, action):
-        if self._board[action.index] is not None:
-            raise Exception(f"Illegal opponent action: Tile placement on an already occupied spot at index {action.index}.")
-        self.apply_action(action)
+    def apply_opponent_action(self, selected_tile):
+        """
+        Applies the opponent's action by taking the selected tile and allowing the agent to place it.
+        """
+        if not selected_tile:
+            raise Exception("No tile was selected by the opponent.")
+
+        # Set the current tile in the state
+        self.set_current_tile(selected_tile)
 
     def is_game_over(self):
         return self._done

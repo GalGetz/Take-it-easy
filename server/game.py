@@ -18,7 +18,7 @@ class Agent(object):
         super(Agent, self).__init__()
 
     @abc.abstractmethod
-    def get_action(self, game_state, tile):
+    def get_action(self, game_state):
         """This method decides where to place the tile."""
         return
 
@@ -31,7 +31,7 @@ class RandomOpponentAgent(Agent):
         super().__init__()
         self.rng = np.random.default_rng()  # Create a random number generator
 
-    def get_action(self, game_state, tile=None):
+    def get_action(self, game_state):
         if not game_state.tiles:
             return Action.STOP
 
@@ -66,20 +66,22 @@ class Game:
         if tile == Action.STOP or not tile:
             return None
 
+        # Set the current tile in the game state
+        self._state.set_current_tile(tile)
         return tile
 
-    def agent_location(self, tile):
+    def agent_location(self):
         """Run the agent's step, returning the location where the tile is placed."""
         if self._state.done or self._should_quit:
             return None
 
         # The main agent decides where to place the selected tile
-        action = self.agent.get_action(self._state, tile)
+        action = self.agent.get_action(self._state)
         if action == Action.STOP:
             return None
 
         # Apply the chosen action to the game state
-        self._state.apply_action(action.index)
+        self._state.apply_action(action)
 
         return action.index
 

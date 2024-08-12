@@ -8,6 +8,6 @@ class AgentFactory:
         if agent_type_str == "Random":
             return RandomAgent()
         elif agent_type_str == "Expectimax":
-            return Expectimax(depth=3)
+            return Expectimax(depth=2)
         else:
             raise ValueError(f"Unknown agent type: {agent_type_str}")

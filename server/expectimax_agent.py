@@ -1,4 +1,4 @@
-from game import Agent
+from game import Agent, Action, PlacementAction
 import game_state
 
 class Expectimax(Agent):
@@ -7,47 +7,49 @@ class Expectimax(Agent):
         self.depth = depth
         self.evaluation_function = evaluation_function if evaluation_function else self.default_evaluation_function
 
-    def get_action(self, game_state, tile):
+
+    def get_action(self, game_state):
         """
-        Returns the expectimax action using self.depth and self.evaluationFunction
+        Returns the expectimax action using self.depth and self.evaluation_function.
 
         The opponent is modeled as choosing uniformly at random from their legal moves.
         """
         def expectimax(state, depth, agent_index):
             if state.done or depth == self.depth:
                 return self.evaluation_function(state)
-
-            legal_actions = state.get_legal_actions()
             if agent_index == 0:  # Agent's turn (maximizing player)
+                legal_actions = state.get_agent_legal_actions()
                 best_value = float('-inf')
-                for action in legal_actions:
-                    successor = state.generate_successor(action, tile)
+                best_action = None
+                for action_index in legal_actions:
+                    action = PlacementAction(index=action_index)
+                    successor = state.generate_successor(agent_index, action)
                     value = expectimax(successor, depth, 1)
-                    best_value = max(best_value, value)
-                return best_value
-            else:  # Opponent's turn (expectation of random board response)
+                    if value > best_value:
+                        best_value = value
+                        best_action = action
+                return best_action if depth == 0 else best_value
+            else:  # Opponent's turn (expectation of random tile draw)
+                legal_actions = state.get_opponent_legal_actions()
                 total_value = 0
                 num_actions = len(legal_actions)
-                for action in legal_actions:
-                    successor = state.generate_successor(action, tile)
+                for tile in legal_actions:
+                    successor = state.generate_successor(1, None)
+                    successor.apply_opponent_action(tile)
                     value = expectimax(successor, depth + 1, 0)
                     total_value += value
                 return total_value / num_actions if num_actions > 0 else 0
+        best_action = expectimax(game_state, 0, 0)
+        if best_action is not None:
+            return best_action
+        return Action.STOP
 
-        best_score = float('-inf')
-        best_action = None
-        for action in game_state.get_legal_actions():
-            successor = game_state.generate_successor(action, tile)
-            score = expectimax(successor, 0, 1)
-            if score > best_score:
-                best_score = score
-                best_action = action
-
-        return best_action
 
     def default_evaluation_function(self, state):
         """Default evaluation function that returns the current score of the game state."""
-        return state.score
+
+        broken_sequences, empty_sequences, partial_sequences = self.check_sequences(state)
+        return state.score - broken_sequences*10 + empty_sequences*10 + partial_sequences*10
 
     def check_sequences(self, state):
         empty_sequences = 0
@@ -75,3 +77,5 @@ class Expectimax(Agent):
         broken_sequences /= (3* game_state.DEFAULT_BOARD_SIZE)
         empty_sequences /= len(game_state.seq_to_idx)
         partial_sequences /= len(game_state.seq_to_idx)
+
+        return broken_sequences,empty_sequences, partial_sequences

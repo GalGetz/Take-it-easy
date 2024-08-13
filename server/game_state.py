@@ -47,7 +47,7 @@ idx_to_seq = [
 DEFAULT_BOARD_SIZE = 19  # We now represent the board as a list of 19 elements
 
 class GameState:
-    def __init__(self, board=None, score=0, done=False, remaining_tiles=None, current_tile=None):
+    def __init__(self, board=None, score=0, done=False, remaining_tiles=None, current_tile=np.nan):
         super(GameState, self).__init__()
         self._done = done
         self._score = score

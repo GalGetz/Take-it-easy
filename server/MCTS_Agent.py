@@ -130,13 +130,15 @@ def create_value_network(input_shape):
     ])
     return model
 
-class MCTSWithNetworks:
+class MCTSWithNetworks(Agent):
     def __init__(self, policy_network, value_network, exploration_weight=1.0, simulations_number=1000):
         self.policy_network = policy_network
         self.value_network = value_network
         self.exploration_weight = exploration_weight
         self.simulations_number = simulations_number
 
+    def get_action(self, game_state):
+        return self.search(game_state)
     def search(self, root):
         for _ in range(self.simulations_number):
             node = self.select(root)
@@ -166,6 +168,7 @@ class MCTSWithNetworks:
     def simulate(self, state):
         # Use the value network to predict the final score
         input_state = np.concatenate([state.board, np.array(state.current_tile).reshape(1, 3)], axis=0).reshape(1, 20, 3, 1)
+        input_state = np.nan_to_num(input_state, nan=0.0)
         return self.value_network.predict(input_state)[0][0]
 
     def backpropagate(self, node, reward):

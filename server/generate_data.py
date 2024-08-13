@@ -1,21 +1,21 @@
 import numpy as np
 
-from server.MCTS_Agent import create_policy_network, create_value_network, MCTSNode, MCTSWithNetworks
-from server.expectimax_agent import Expectimax
-from server.game import RandomOpponentAgent, Game
-from server.game_state import GameState
+from MCTS_Agent import create_policy_network, create_value_network, MCTSNode, MCTSWithNetworks
+from expectimax_agent import Expectimax
+from game import RandomOpponentAgent, Game
+from game_state import GameState
 import tensorflow as tf
 
 import numpy as np
 import pickle
 
-def generate_and_save_data(num_samples=1000, file_path='dataset.pkl'):
-    data = generate_random_data(num_samples)
+def generate_and_save_data(num_samples=1000, file_path='dataset.pkl', load = 0):
+    data = generate_random_data(num_samples, load)
 
-    with open(file_path, 'wb') as f:
-        pickle.dump(data, f)
-
-    print(f"Dataset saved to {file_path}")
+    # with open(file_path, 'wb') as f:
+    #     pickle.dump(data, f)
+    #
+    # print(f"Dataset saved to {file_path}")
     return data
 
 def generate_agent_policy_targets(game_state, agent):
@@ -28,13 +28,20 @@ def generate_agent_policy_targets(game_state, agent):
 
         remaining_prob = 0.1
         other_probs = remaining_prob / (len(legal_moves) - 1) if len(legal_moves) > 1 else 0
-        for move in legal_moves:
-            if move != best_move.index:
-                policy_target[move] = other_probs
+        policy_target[legal_moves] = np.maximum(policy_target[legal_moves], other_probs)
+        # for move in legal_moves:
+        #     if move != best_move.index:
+        #         policy_target[move] = other_probs
 
     return policy_target
 
-def generate_random_data(num_samples=1000):
+def generate_random_data(num_samples=1000, load=0):
+
+    if load == 1:
+        with open(f'{num_samples}_games_data.pkl', 'rb') as f:
+            data = pickle.load(f)
+            return data
+
     inputs = []
     policy_targets = []
     value_targets = []
@@ -70,9 +77,20 @@ def generate_random_data(num_samples=1000):
     policy_targets = np.array(policy_targets)
     value_targets = np.array(value_targets).reshape(-1, 1)
 
-    return {'input': inputs, 'policy_target': policy_targets, 'value_target': value_targets}
+    # save the samples
+    data = {
+        'input': inputs,
+        'policy_target': policy_targets,
+        'value_target': value_targets,
+    }
 
-generate_random_data()
+    # Save the entire data structure to a file
+    with open(f'{num_samples}_games_data.pkl', 'wb') as f:
+        pickle.dump(data, f)
+
+    return {data}
+
+# generate_random_data()
 
 def train_and_save_networks(policy_network, value_network, data, epochs=10, batch_size=32, policy_model_path='policy_network.h5', value_model_path='value_network.h5'):
     policy_network.compile(optimizer='adam', loss='categorical_crossentropy')
@@ -98,23 +116,38 @@ def load_networks(policy_model_path='policy_network.h5', value_model_path='value
     return policy_network, value_network
 
 if __name__ == "__main__":
-    # Step 1: Generate and save the dataset
-    data = generate_and_save_data(num_samples=10, file_path='dataset.pkl')
-    print("Data Generated")
-    # Step 2: Create and train networks, then save them
-    input_shape = (20, 3, 1)
-    policy_network = create_policy_network(input_shape)
-    value_network = create_value_network(input_shape)
-    train_and_save_networks(policy_network, value_network, data, epochs=10, batch_size=32, policy_model_path='policy_network.h5', value_model_path='value_network.h5')
-    print("Models Trained")
+    # # Step 1: Generate and save the dataset
+    # data = generate_and_save_data(num_samples=1000, file_path='dataset.pkl',load=1) #load samples from pkl file
+    # data['value_target'] = np.repeat(data['value_target'], 19)
+    # data['input'] = np.nan_to_num(data['input'], nan=0.0) #consider moving it to the generation
+    # print("Data Generated")
+    # # Step 2: Create and train networks, then save them
+    # input_shape = (20, 3, 1)
+    # policy_network = create_policy_network(input_shape)
+    # value_network = create_value_network(input_shape)
+    # train_and_save_networks(policy_network, value_network, data, epochs=10, batch_size=32, policy_model_path='policy_network.h5', value_model_path='value_network.h5')
+    # print("Models Trained")
 
     # Step 3: Load the trained models
     policy_network, value_network = load_networks(policy_model_path='policy_network.h5', value_model_path='value_network.h5')
 
-    # Step 4: Run MCTS with the loaded models
+    # # Step 4: Run MCTS with the loaded models
+    # initial_state = GameState()
+    # root = MCTSNode(initial_state)
+    # mcts_agent = MCTSWithNetworks(policy_network, value_network)
+    # best_action = mcts_agent.search(root)
+
+    # Initialize the game state
     initial_state = GameState()
     root = MCTSNode(initial_state)
     mcts_agent = MCTSWithNetworks(policy_network, value_network)
+
+    opponent_agent = RandomOpponentAgent()
+
+    # Initialize the game
+    game = Game(mcts_agent, opponent_agent)
+    game.initialize(initial_state)
+    game.current_tile()
     best_action = mcts_agent.search(root)
 
     print(f"Best action chosen by MCTS: {best_action.index}")

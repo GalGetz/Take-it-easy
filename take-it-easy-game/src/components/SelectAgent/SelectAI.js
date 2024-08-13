@@ -16,7 +16,7 @@ export default function BasicSelect({ agent, setAgent }) {
         <InputLabel id="demo-simple-select-label">Agent</InputLabel>
         <Select value={agent} label="Agent" onChange={handleChange}>
           <MenuItem value={'RL'}>Reinforcement Learning</MenuItem>
-          <MenuItem value={'Expectimax'}>ExpteciMax</MenuItem>
+          <MenuItem value={'Expectimax'}>ExpectiMax</MenuItem>
           <MenuItem value={'Monte Carlo'}>Monte Carlo</MenuItem>
           <MenuItem value={'Random'}>Random</MenuItem>
         </Select>

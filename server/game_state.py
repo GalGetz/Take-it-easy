@@ -115,7 +115,7 @@ class GameState:
 
     def get_agent_legal_actions(self):
         # Legal actions are the indices on the board that are still None
-        return [i for i, tile in enumerate(self._board) if np.isnan(tile[0]) ]
+        return [i for i, tile in enumerate(self._board) if np.isnan(tile[0])]
 
     def get_opponent_legal_actions(self):
         return list(self._tiles)

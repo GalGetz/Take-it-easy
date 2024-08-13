@@ -1,7 +1,7 @@
 import math
 import random
 
-from game_state import GameState
+from game import Agent, PlacementAction
 
 
 class MCTSNode:
@@ -84,9 +84,6 @@ class MCTS:
             node = node.parent
 
 
-from game import Agent, RandomOpponentAgent, Game, PlacementAction
-
-
 class MCTSAgent(Agent):
     def __init__(self, initial_simulations=100, final_simulations=1000, exploration_weight=1.0, max_steps=19):
         super(MCTSAgent, self).__init__()
@@ -106,5 +103,3 @@ class MCTSAgent(Agent):
         """Adjust the number of simulations based on the current step of the game."""
         return int(self.initial_simulations + (self.final_simulations - self.initial_simulations) * (
                     current_step / self.max_steps))
-
-

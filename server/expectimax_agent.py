@@ -9,7 +9,7 @@ from functools import lru_cache
 class Expectimax(Agent):
     def __init__(self, weights=None, max_depth=5, max_actions=27, evaluation_function=None):
         super(Expectimax, self).__init__()
-        self.weights = weights if weights is not None else [10, 2, 10, 1, 1]  # Default weights
+        self.weights = weights if weights is not None else [10, 2, 6, 5, 1]  # Default weights
         self.max_depth = max_depth
         self.max_actions = max_actions
         self.evaluation_function = evaluation_function if evaluation_function else self.default_evaluation_function

@@ -229,3 +229,4 @@ class GameState:
                 total_score += calculate_score_for_sequence(indices, 1)  # Right component
 
         return total_score
+

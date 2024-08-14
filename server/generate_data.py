@@ -35,10 +35,10 @@ def generate_agent_policy_targets(game_state, agent):
 
 def generate_random_data(num_samples=1000, load=0):
 
-    # if load == 1:
-    #     with open(f'{num_samples}_games_data.pkl', 'rb') as f:
-    #         data = pickle.load(f)
-    #         return data
+    if load == 1:
+        with open(f'{num_samples}_games_data.pkl', 'rb') as f:
+            data = pickle.load(f)
+            return data
         
     if load == 1:
         with open(f'{num_samples}_games_data.pkl', 'rb') as f:
@@ -133,9 +133,9 @@ def load_networks(policy_model_path='policy_network.h5', value_model_path='value
 
 if __name__ == "__main__":
     # # Step 1: Generate and save the dataset
-    print("gal")
-    data = generate_and_save_data(num_samples=1000, file_path='dataset.pkl', load=0) #load samples from pkl file
-    print('finished')
+    # print("gal")
+    # data = generate_and_save_data(num_samples=1000, file_path='dataset.pkl', load=1) #load samples from pkl file
+    # print('finished')
     # data['value_target'] = np.repeat(data['value_target'], 19)
     # data['input'] = np.nan_to_num(data['input'], nan=0.0) #consider moving it to the generation
     # print("Data Generated")
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     # print("Models Trained")
 
     # Step 3: Load the trained models
-    # policy_network, value_network = load_networks(policy_model_path='policy_network.h5', value_model_path='value_network.h5')
+    policy_network, value_network = load_networks(policy_model_path='policy_network.h5', value_model_path='value_network.h5')
 
     # # Step 4: Run MCTS with the loaded models
     # initial_state = GameState()

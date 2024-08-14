@@ -9,7 +9,7 @@ from functools import lru_cache
 class Expectimax(Agent):
     def __init__(self, weights=None, max_depth=5, max_actions=27, evaluation_function=None):
         super(Expectimax, self).__init__()
-        self.weights = weights if weights is not None else [10, 2, 10, 1, 1]  # Default weights
+        self.weights = weights if weights is not None else [10, 2, 6, 5, 1]  # Default weights
         self.max_depth = max_depth
         self.max_actions = max_actions
         self.evaluation_function = evaluation_function if evaluation_function else self.default_evaluation_function
@@ -93,8 +93,7 @@ class Expectimax(Agent):
         broken_sequences = 0
         partial_sequences = 0
         total_sum = 0
-        # duplicated_seqs = 0
-        # print("*")
+
         for seq, index in game_state.seq_to_idx.items():
             # print(seq)
             component_index = None
@@ -104,17 +103,8 @@ class Expectimax(Agent):
                 component_index = 0  # Vertical component
             elif "_r" in seq:
                 component_index = 1  # Left component
-
-            # print(f"board index {state.board[index]}")
-            # print(f"index: {index}")
-            # mask = np.where(np.array(state.board[index]) != None)
             mask = ~np.isnan(state.board[index][:,0])
-            # print(mask, "mask")
             filtered_list = state.board[index][mask][:, component_index].astype(int)
-            # print(filtered_list, "filtered")
-            # np.array([x for x in state.board[index] if x is not None]))
-            # print(f"mask: {mask}")
-            # filtered_values = state.board[index][mask][:, component_index]
             sum_values = np.sum(filtered_list)
             total_sum += sum_values
             unique_values = np.unique(filtered_list)
@@ -123,29 +113,19 @@ class Expectimax(Agent):
                 # print(unique_values, "unique")
                 num_to_seq[unique_values -1] += 1
 
-            # sum_values = 0
-            # unique_values = set()
-            # for t in index:
-            #     if state.board[t] is not None:
-            #         # sum_values += state.board[t][component_index]
-            #         unique_values.add(state.board[t][component_index])
-            #         num_to_seq[state.board[t][component_index]] += 1
-            #
-            # # total_sum += sum_values
-            # different_values = len(unique_values)
-
             if different_values > 1:
                 broken_sequences += sum_values
             elif different_values == 1:
-                partial_sequences += 1
+                partial_sequences += unique_values[0]
             elif different_values == 0:
                 empty_sequences += 1
             # duplicated_seqs += sum(i*num_to_seq[i] for i in range(10))
 
         broken_sequences /= total_sum
         empty_sequences /= len(game_state.seq_to_idx)
-        partial_sequences /= len(game_state.seq_to_idx)
-        duplicated_seqs = np.sum(np.arange(1,10)* num_to_seq)
+        partial_sequences /= len(game_state.seq_to_idx)*5
+        duplicated_seqs = np.sum(np.maximum(0,num_to_seq-1))
+        #np.arange(1,10)*
 
         return broken_sequences, empty_sequences, partial_sequences, duplicated_seqs
 

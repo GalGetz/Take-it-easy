@@ -1,7 +1,10 @@
 import math
 import random
 
+import numpy as np
+
 from game import Agent, PlacementAction
+import tensorflow as tf
 
 
 class MCTSNode:
@@ -103,3 +106,73 @@ class MCTSAgent(Agent):
         """Adjust the number of simulations based on the current step of the game."""
         return int(self.initial_simulations + (self.final_simulations - self.initial_simulations) * (
                     current_step / self.max_steps))
+
+
+def create_policy_network(input_shape):
+    model = tf.keras.Sequential([
+        tf.keras.Input(shape=input_shape),  # Specify the input shape here
+        tf.keras.layers.Conv2D(32, kernel_size=(2, 2), activation='relu', padding='same'),
+        tf.keras.layers.Conv2D(64, kernel_size=(2, 2), activation='relu', padding='same'),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(256, activation='relu'),
+        tf.keras.layers.Dense(19, activation='softmax')  # 19 possible actions (one per tile)
+    ])
+    return model
+
+def create_value_network(input_shape):
+    model = tf.keras.Sequential([
+        tf.keras.Input(shape=input_shape),  # Specify the input shape here
+        tf.keras.layers.Conv2D(32, kernel_size=(2, 2), activation='relu', padding='same'),
+        tf.keras.layers.Conv2D(64, kernel_size=(2, 2), activation='relu', padding='same'),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(256, activation='relu'),
+        tf.keras.layers.Dense(1, activation='tanh')  # Value prediction
+    ])
+    return model
+
+class MCTSWithNetworks(Agent):
+    def __init__(self, policy_network, value_network, exploration_weight=1.0, simulations_number=1000):
+        self.policy_network = policy_network
+        self.value_network = value_network
+        self.exploration_weight = exploration_weight
+        self.simulations_number = simulations_number
+
+    def get_action(self, game_state):
+        return self.search(game_state)
+    def search(self, root):
+        for _ in range(self.simulations_number):
+            node = self.select(root)
+            if not node.state.done:  # Expand only if not a terminal state
+                node = self.expand(node)
+            reward = self.simulate(node.state)
+            self.backpropagate(node, reward)
+        return root.best_action()
+
+    def select(self, node):
+        while not node.state.done:
+            if node.is_fully_expanded():
+                node = node.best_child(self.exploration_weight)
+            else:
+                return node
+        return node
+
+    def expand(self, node):
+        legal_actions = node.state.get_agent_legal_actions()
+        for action in legal_actions:
+            if not any(child.action.index == action for child in node.children):
+                next_state = node.state.generate_successor(agent_index=0, action=PlacementAction(index=action))
+                child_node = MCTSNode(next_state, parent=node, action=PlacementAction(index=action))
+                node.children.append(child_node)
+                return child_node
+
+    def simulate(self, state):
+        # Use the value network to predict the final score
+        input_state = np.concatenate([state.board, np.array(state.current_tile).reshape(1, 3)], axis=0).reshape(1, 20, 3, 1)
+        input_state = np.nan_to_num(input_state, nan=0.0)
+        return self.value_network.predict(input_state)[0][0]
+
+    def backpropagate(self, node, reward):
+        while node is not None:
+            node.visits += 1
+            node.value += reward
+            node = node.parent

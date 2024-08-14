@@ -54,9 +54,15 @@ def run_simulation(num_simulations=1000, output_file='mcts_scores.txt', policy_m
     std_dev = np.std(scores)
 
     # Write the scores, mean, and standard deviation to a file
+    scores_array = np.array(scores)
+
+    # Calculate the expectation (mean) and standard deviation
+    mean_score = np.mean(scores_array)
+    std_dev = np.std(scores_array)
+
+    # Save the array of scores to a file in the format [2, 3, 4, ...]
     with open(output_file, 'w') as f:
-        for score in scores:
-            f.write(f"{score}\n")
+        f.write(f"{scores_array.tolist()}\n")  # Save the array in a comma-separated list format
         f.write(f"\nExpectation (Mean): {mean_score}\n")
         f.write(f"Standard Deviation: {std_dev}\n")
 
@@ -64,8 +70,9 @@ def run_simulation(num_simulations=1000, output_file='mcts_scores.txt', policy_m
     print(f"Expectation (Mean) Score: {mean_score}")
     print(f"Standard Deviation: {std_dev}")
     print(f"Scores and statistics saved to {output_file}.")
-    print(f"Highest {max(scores)}.")
+    print(f"Highest Score: {max(scores_array)}.")
 
-    return mean_score, std_dev
+    return scores_array
 
-run_simulation(20)
+
+run_simulation(3)

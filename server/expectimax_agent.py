@@ -1,9 +1,7 @@
-import time
 from game import Agent, Action, PlacementAction
 import game_state
 import numpy as np
 
-from functools import lru_cache
 
 
 class Expectimax(Agent):

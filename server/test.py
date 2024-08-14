@@ -2,22 +2,16 @@ import numpy as np
 import time
 from game_state import GameState
 from game import Game, RandomOpponentAgent
-from MCTS_Agent import MCTSWithNetworks  # Assuming MCTSWithNetworks is defined in a file
+from MCTS_Agent import  MCTSAgent  # Assuming MCTSWithNetworks is defined in a file
 from generate_data import load_networks
 from expectimax_agent import Expectimax
 
 def run_simulation(num_simulations=1000, output_file='mcts_scores.txt', policy_model_path='policy_network.h5', value_model_path='value_network.h5'):
     scores = []
 
-    # Load the trained policy and value networks
-    policy_network, _ = load_networks('policy_network.h5')
-    value_network, _ = load_networks('value_network.h5')
-    policy_network.compile(optimizer='adam', loss='categorical_crossentropy')
-    value_network.compile(optimizer='adam', loss='mean_squared_error')
-
     # Initialize the MCTS agent with the loaded networks
-    mcts_agent = MCTSWithNetworks(policy_network, value_network, exploration_weight=4.0, simulations_number=50)
-    # mcts_agent = Expectimax(max_depth=3)
+    mcts_agent = MCTSAgent(initial_simulations=400, final_simulations=600, exploration_weight=44.0)
+
     for i in range(num_simulations):
         start_time = time.time()  # Start the timer
 
@@ -73,4 +67,5 @@ def run_simulation(num_simulations=1000, output_file='mcts_scores.txt', policy_m
     print(f"Highest {max(scores)}.")
 
     return mean_score, std_dev
-run_simulation()
+
+run_simulation(20)

@@ -4,7 +4,7 @@ from game_state import GameState
 from game import Game, RandomOpponentAgent
 from MCTS_Agent import MCTSWithNetworks  # Assuming MCTSWithNetworks is defined in a file
 from generate_data import load_networks
-from server.expectimax_agent import Expectimax
+from expectimax_agent import Expectimax
 
 def run_simulation(num_simulations=1000, output_file='mcts_scores.txt', policy_model_path='policy_network.h5', value_model_path='value_network.h5'):
     scores = []

@@ -132,13 +132,16 @@ def create_value_network(input_shape):
 
 class MCTSWithNetworks(Agent):
     def __init__(self, policy_network, value_network, exploration_weight=1.0, simulations_number=1000):
+        super(MCTSWithNetworks, self).__init__()
         self.policy_network = policy_network
         self.value_network = value_network
         self.exploration_weight = exploration_weight
         self.simulations_number = simulations_number
 
     def get_action(self, game_state):
-        return self.search(game_state)
+        root = MCTSNode(game_state)
+        return self.search(root)
+
     def search(self, root):
         for _ in range(self.simulations_number):
             node = self.select(root)
@@ -168,8 +171,24 @@ class MCTSWithNetworks(Agent):
     def simulate(self, state):
         # Use the value network to predict the final score
         input_state = np.concatenate([state.board, np.array(state.current_tile).reshape(1, 3)], axis=0).reshape(1, 20, 3, 1)
-        input_state = np.nan_to_num(input_state, nan=0.0)
-        return self.value_network.predict(input_state)[0][0]
+        input_state = np.nan_to_num(input_state, nan=0.0)  # Replace NaNs with 0s
+        predicted_value = self.value_network.predict(input_state, verbose=0)[0][0]
+
+        # Simulate a random rollout from the current state until the game ends
+        while not state.done:
+            # Generate a tile using the opponent's logic
+            opponent_action = state.pop_random_tile(np.random.randint(0, len(state.tiles)))
+            state.apply_opponent_action(opponent_action)
+
+            if state.done:
+                break
+
+            # Get legal actions for the agent and randomly choose one
+            legal_actions = state.get_agent_legal_actions()
+            action = np.random.choice(legal_actions)
+            state = state.generate_successor(agent_index=0, action=PlacementAction(index=action))
+
+        return predicted_value + state.score  # Combine predicted value with the rollout score
 
     def backpropagate(self, node, reward):
         while node is not None:

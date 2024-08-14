@@ -128,7 +128,7 @@ def create_value_network(input_shape):
         tf.keras.layers.Conv2D(64, kernel_size=(2, 2), activation='relu', padding='same'),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(256, activation='relu'),
-        tf.keras.layers.Dense(1, activation='tanh')  # Value prediction
+        tf.keras.layers.Dense(1, activation='relu')  # Value prediction
     ])
     return model
 
@@ -170,6 +170,7 @@ class MCTSWithNetworks(Agent):
         input_state = np.concatenate([state.board, np.array(state.current_tile).reshape(1, 3)], axis=0).reshape(1, 20, 3, 1)
         input_state = np.nan_to_num(input_state, nan=0.0)  # Replace NaNs with 0s
         predicted_value = self.value_network.predict(input_state, verbose=0)[0][0]
+        # print(f"predicted:{predicted_value}")
         return predicted_value
 
     def backpropagate(self, node, reward):

@@ -20,6 +20,10 @@ function App() {
   const [placedTiles, setPlacedTiles] = useState(
     Array.from({ length: TILES_SUM }),
   );
+  const [placedAITiles, setPlacedAITiles] = useState(
+    Array.from({ length: TILES_SUM }),
+  );
+  const [agent, setAgent] = useState('');
 
   const startGame = () => {
     navigate('/game');
@@ -31,6 +35,8 @@ function App() {
 
   const restartGame = () => {
     setPlacedTiles(Array.from({ length: TILES_SUM }));
+    setPlacedAITiles(Array.from({ length: TILES_SUM }));
+    setAgent('');
     navigate('/');
   };
 
@@ -39,7 +45,7 @@ function App() {
       <AppBar position="static" sx={{ borderRadius: 2 }} color="primary">
         <Toolbar>
           <Typography
-            variant="h4"
+            variant="h3"
             sx={{
               flexGrow: 1,
               textAlign: 'center',
@@ -60,13 +66,22 @@ function App() {
               onEndGame={endGame}
               placedTiles={placedTiles}
               setPlacedTiles={setPlacedTiles}
+              placedAITiles={placedAITiles}
+              setPlacedAITiles={setPlacedAITiles}
+              agent={agent}
+              setAgent={setAgent}
             />
           }
         />
         <Route
           path="/end"
           element={
-            <EndGame onRestart={restartGame} playerTiles={placedTiles} />
+            <EndGame
+              onRestart={restartGame}
+              playerTiles={placedTiles}
+              placedAITiles={placedAITiles}
+              agent={agent}
+            />
           }
         />
       </Routes>

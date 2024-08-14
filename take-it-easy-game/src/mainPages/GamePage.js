@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 // import ScoreBoard from '../components/ScoreBoard';
 import '../styles.css';
 import { getAIPlacement, getCurrentTile, chooseAiAgent } from '../game-api';
@@ -8,26 +8,19 @@ import Board from '../components/Board';
 import TilePicker from '../components/TilePicker';
 import ContentAi from '../components/SelectAgent/ContentAi';
 
-const TILES_SUM = 19;
-
-export function GameFace({ onEndGame, placedTiles, setPlacedTiles }) {
-  const [placedAITiles, setPlacedAITiles] = useState(
-    Array.from({ length: TILES_SUM }),
-  );
-  const [agent, setAgent] = useState('');
+export function GameFace({
+  onEndGame,
+  placedTiles,
+  setPlacedTiles,
+  agent,
+  setAgent,
+  placedAITiles,
+  setPlacedAITiles,
+}) {
   const [loaderTurn, setLoaderTurn] = useState(false);
   const [currentTile, setCurrentTile] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const current = await getCurrentTile();
-  //     console.log(current);
-  //     setCurrentTile(current);
-  //   }
-  //   fetchData();
-  // }, []);
 
   const startGame = async () => {
     setLoading(true);

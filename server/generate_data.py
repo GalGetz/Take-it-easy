@@ -1,13 +1,11 @@
-import numpy as np
-
 from MCTS_Agent import create_policy_network, create_value_network, MCTSNode, MCTSWithNetworks
 from expectimax_agent import Expectimax
 from game import RandomOpponentAgent, Game
 from game_state import GameState
 import tensorflow as tf
-
 import numpy as np
 import pickle
+from datetime import datetime
 
 def generate_and_save_data(num_samples=1000, file_path='dataset.pkl', load = 0):
     data = generate_random_data(num_samples, load)
@@ -37,14 +35,27 @@ def generate_agent_policy_targets(game_state, agent):
 
 def generate_random_data(num_samples=1000, load=0):
 
+    # if load == 1:
+    #     with open(f'{num_samples}_games_data.pkl', 'rb') as f:
+    #         data = pickle.load(f)
+    #         return data
+        
     if load == 1:
         with open(f'{num_samples}_games_data.pkl', 'rb') as f:
             data = pickle.load(f)
-            return data
+        existing_inputs = data['input']
+        existing_policy_targets = data['policy_target']
+        existing_value_targets = data['value_target']
+    else:
+        existing_inputs = np.array([])
+        existing_policy_targets = np.array([])
+        existing_value_targets = np.array([])
 
     inputs = []
     policy_targets = []
     value_targets = []
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
 
     for _ in range(num_samples):
         game_state = GameState()  # Initialize a new game state
@@ -77,6 +88,11 @@ def generate_random_data(num_samples=1000, load=0):
     policy_targets = np.array(policy_targets)
     value_targets = np.array(value_targets).reshape(-1, 1)
 
+    if len(existing_inputs) > 0:
+        inputs = np.concatenate([existing_inputs, inputs], axis=0)
+        policy_targets = np.concatenate([existing_policy_targets, policy_targets], axis=0)
+        value_targets = np.concatenate([existing_value_targets, value_targets], axis=0)
+
     # save the samples
     data = {
         'input': inputs,
@@ -85,10 +101,10 @@ def generate_random_data(num_samples=1000, load=0):
     }
 
     # Save the entire data structure to a file
-    with open(f'{num_samples}_games_data.pkl', 'wb') as f:
+    with open(f'{num_samples}_games_data_{timestamp}.pkl', 'wb') as f:
         pickle.dump(data, f)
 
-    return {data}
+    return data
 
 # generate_random_data()
 
@@ -117,7 +133,9 @@ def load_networks(policy_model_path='policy_network.h5', value_model_path='value
 
 if __name__ == "__main__":
     # # Step 1: Generate and save the dataset
-    # data = generate_and_save_data(num_samples=1000, file_path='dataset.pkl',load=1) #load samples from pkl file
+    print("gal")
+    data = generate_and_save_data(num_samples=1000, file_path='dataset.pkl', load=0) #load samples from pkl file
+    print('finished')
     # data['value_target'] = np.repeat(data['value_target'], 19)
     # data['input'] = np.nan_to_num(data['input'], nan=0.0) #consider moving it to the generation
     # print("Data Generated")
@@ -129,7 +147,7 @@ if __name__ == "__main__":
     # print("Models Trained")
 
     # Step 3: Load the trained models
-    policy_network, value_network = load_networks(policy_model_path='policy_network.h5', value_model_path='value_network.h5')
+    # policy_network, value_network = load_networks(policy_model_path='policy_network.h5', value_model_path='value_network.h5')
 
     # # Step 4: Run MCTS with the loaded models
     # initial_state = GameState()
@@ -138,16 +156,22 @@ if __name__ == "__main__":
     # best_action = mcts_agent.search(root)
 
     # Initialize the game state
-    initial_state = GameState()
-    root = MCTSNode(initial_state)
-    mcts_agent = MCTSWithNetworks(policy_network, value_network)
+    # initial_state = GameState()
+    # root = MCTSNode(initial_state)
+    # mcts_agent = MCTSWithNetworks(policy_network, value_network)
 
-    opponent_agent = RandomOpponentAgent()
+    # opponent_agent = RandomOpponentAgent()
 
     # Initialize the game
-    game = Game(mcts_agent, opponent_agent)
-    game.initialize(initial_state)
-    game.current_tile()
-    best_action = mcts_agent.search(root)
+    # game = Game(mcts_agent, opponent_agent)
+    # game.initialize(initial_state)
+    # game.current_tile()
+    # best_action = mcts_agent.search(root)
 
-    print(f"Best action chosen by MCTS: {best_action.index}")
+    # print(f"Best action chosen by MCTS: {best_action.index}")
+
+# with open(f'{2000}_games_data.pkl', 'rb') as f:
+#     data = pickle.load(f)
+#     print(len(data['input']))
+#     print(len(data['policy_target']))
+#     print(len(data['value_target']))

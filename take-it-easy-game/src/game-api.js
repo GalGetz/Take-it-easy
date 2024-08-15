@@ -38,3 +38,12 @@ export const chooseAiAgent = async (agent) => {
     console.error('There was an error fetching the score!', e);
   }
 };
+
+export const getRestTiles = async () => {
+  try {
+    const response = await axios.get('http://127.0.0.1:5000/rest_tiles');
+    return response.data.data;
+  } catch (e) {
+    console.error('There was an error fetching the action!', e);
+  }
+};

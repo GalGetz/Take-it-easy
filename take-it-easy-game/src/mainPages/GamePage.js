@@ -89,7 +89,7 @@ export function GameFace({
             Start Game
           </Button>
         </Box>
-        {agent && <ContentAi agent={agent} />}
+        {<ContentAi agent={agent} />}
         <div className="TilesContainer">
           {restTiles &&
             restTiles.map((tile) => (

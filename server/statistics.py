@@ -130,3 +130,68 @@ plt.ylabel('Score', fontsize=14)
 # Display the boxplot
 plt.grid(True, linestyle='--', alpha=0.6)
 plt.show()
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+data_mcts = np.array(data_mcts)
+random_data = np.array(random_data)
+expectimax_data = np.array(expectimax_data)
+# Define the segments including the "Very Bad Game"
+segments = {
+    'Bad Game (80-120)': (80, 120),
+    'Average (120-140)': (120, 140),
+    'Good (140-200)': (140, 200),
+    'Rare (200+)': (200, 307)
+}
+
+# Calculate the percentage for each segment
+def calculate_segment_percentages(data, segments):
+    total_count = len(data)
+    percentages = {}
+    for label, (low, high) in segments.items():
+        if high == 307:  # Handle the last segment where the upper bound is inclusive
+            count = np.sum((data >= low) & (data <= high))
+        else:
+            count = np.sum((data >= low) & (data < high))
+        percentages[label] = (count / total_count) * 100
+    return percentages
+
+# Calculate percentages for each dataset
+percentages_random = calculate_segment_percentages(random_data, segments)
+percentages_expectimax = calculate_segment_percentages(expectimax_data, segments)
+percentages_mcts = calculate_segment_percentages(data_mcts, segments)
+
+# Combine the results into a DataFrame for better visualization
+segment_stats_percent = pd.DataFrame({
+    'Random': [percentages_random[label] for label in segments.keys()],
+    'MCTS': [percentages_mcts[label] for label in segments.keys()],
+    'Expectimax': [percentages_expectimax[label] for label in segments.keys()]
+}, index=list(segments.keys()))
+
+# Transpose the DataFrame to flip axes
+segment_stats_percent = segment_stats_percent.T
+
+# Plot the heatmap using Matplotlib
+plt.figure(figsize=(14, 8))
+plt.imshow(segment_stats_percent, cmap='coolwarm', aspect='auto')
+
+# Add color bar
+plt.colorbar(label='Percentage of Scores (%)')
+
+# Set the ticks and labels
+plt.xticks(np.arange(len(segment_stats_percent.columns)), segment_stats_percent.columns, size=16, rotation=5)
+plt.yticks(np.arange(len(segment_stats_percent.index)), segment_stats_percent.index, size=16)
+
+# Annotate the heatmap with the percentages
+for i in range(len(segment_stats_percent.index)):
+    for j in range(len(segment_stats_percent.columns)):
+        plt.text(j, i, f'{segment_stats_percent.iloc[i, j]:.1f}%', ha='center', va='center', color='black', size='20')
+
+# Add titles and labels
+plt.title('Distribution of Scores by Segment (Percentage)', fontsize=20)
+plt.xlabel('Score Segment', fontsize=18)
+plt.ylabel('Algorithm', fontsize=18)
+
+# Display the heatmap
+plt.show()

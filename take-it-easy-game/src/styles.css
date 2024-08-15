@@ -19,6 +19,16 @@
   border-style: solid;
 }
 
+.TilesContainer {
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(9, 80px);
+  grid-template-rows: repeat(3, 45px);
+  grid-gap: 50px; /* Adjust the value as needed */
+  margin-top: 100px;
+  margin-bottom: 50px;
+}
+
 .HexCell {
   width: 130%;
   height: 190%;

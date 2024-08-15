@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import ScoreBoard from '../components/ScoreBoard';
 import '../styles.css';
-import { getAIPlacement, getCurrentTile, chooseAiAgent } from '../game-api';
+import {
+  getAIPlacement,
+  getCurrentTile,
+  chooseAiAgent,
+  getRestTiles,
+} from '../game-api';
 import SelectAI from '../components/SelectAgent/SelectAI';
 import { Box, Button, CircularProgress } from '@mui/material';
 import Board from '../components/Board';
 import TilePicker from '../components/TilePicker';
 import ContentAi from '../components/SelectAgent/ContentAi';
+import Tile from '../components/Tile';
 
 export function GameFace({
   onEndGame,
@@ -21,6 +27,16 @@ export function GameFace({
   const [currentTile, setCurrentTile] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [restTiles, setRestTiles] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // await chooseAiAgent('Random');
+      const tiles = await getRestTiles();
+      setRestTiles(tiles);
+    };
+    fetchData();
+  }, []);
 
   const startGame = async () => {
     setLoading(true);
@@ -74,6 +90,14 @@ export function GameFace({
           </Button>
         </Box>
         {agent && <ContentAi agent={agent} />}
+        <div className="TilesContainer">
+          {restTiles &&
+            restTiles.map((tile) => (
+              <div className="HexCell" key={tile}>
+                <Tile index={tile[0]} values={tile} onClick={() => {}} />
+              </div>
+            ))}
+        </div>
       </>
     );
   };

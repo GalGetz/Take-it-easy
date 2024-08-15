@@ -69,7 +69,8 @@ def init_game():
 
 @app.route('/rest_tiles', methods=['GET'])
 def rest_tiles():
-    tiles = manager._game._state.get_opponent_legal_actions()
+    state = GameState()
+    tiles = state.generate_tiles()
 
     response = {
         'status': 'success',

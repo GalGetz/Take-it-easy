@@ -11,7 +11,7 @@ from expectimax_agent import Expectimax
 
 
 # Function to run the simulation
-def run_simulation(weights, num_simulations=25):
+def run_simulation(weights, num_simulations=50):
     scores = []
 
     for _ in range(num_simulations):
@@ -73,7 +73,7 @@ def objective(**weights):
 
 if __name__ == "__main__":
     # Perform Bayesian optimization with progress tracking
-    n_calls = 50
+    n_calls = 400
     print(f"Starting Bayesian optimization with {n_calls} iterations...\n")
     res = gp_minimize(objective, space, n_calls=n_calls, random_state=0, verbose=True)
 
@@ -82,6 +82,17 @@ if __name__ == "__main__":
     print("Best weights found: ", res.x)
     print("Best score achieved: ", -res.fun)
 
-    # Print the progress
-    for i, (weights, score) in enumerate(zip(res.x_iters, res.func_vals), 1):
-        print(f"Iteration {i}/{n_calls}: Weights = {weights}, Score = {-score:.4f}")
+    # Open a file to write the results
+    with open('optimization_results.txt', 'w') as f:
+        f.write(f"Iteration | Weights (broken_seq, empty_seq, partial_seq, duplicated_seq, score) | Score\n")
+        f.write("-" * 80 + "\n")
+
+        # Write the progress for each iteration
+        for i, (weights, score) in enumerate(zip(res.x_iters, res.func_vals), 1):
+            weight_str = ", ".join(f"{w:.4f}" for w in weights)
+            f.write(f"{i}/{n_calls}: Weights = [{weight_str}], Score = {-score:.4f}\n")
+
+            # Also print to console for progress tracking
+            print(f"Iteration {i}/{n_calls}: Weights = [{weight_str}], Score = {-score:.4f}")
+
+    print("\nOptimization results written to 'optimization_results.txt'.")

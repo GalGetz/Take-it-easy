@@ -67,6 +67,17 @@ def init_game():
     return jsonify({'status': 'success', 'message': f'Game initialized with agent{data["agent"]}'})
 
 
+@app.route('/rest_tiles', methods=['GET'])
+def rest_tiles():
+    state = GameState()
+    tiles = state.generate_tiles()
+
+    response = {
+        'status': 'success',
+        'data': tiles,
+    }
+    return jsonify(response)
+
 @app.route('/current_tile', methods=['GET'])
 def current_tile():
     tile, _ = manager.get_turn()

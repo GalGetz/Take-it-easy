@@ -1,17 +1,18 @@
+from datetime import datetime
+
 import numpy as np
 import time
 from game_state import GameState
 from game import Game, RandomOpponentAgent
-from MCTS_Agent import  MCTSAgent  # Assuming MCTSWithNetworks is defined in a file
-from generate_data import load_networks
+from MCTS_Agent import  MCTSAgent
 from expectimax_agent import Expectimax
 
-def run_simulation(num_simulations=1000, output_file='mcts_scores.txt', policy_model_path='policy_network.h5', value_model_path='value_network.h5'):
+def run_simulation(num_simulations=400, output_file='Expectimax_scores.txt', policy_model_path='policy_network.h5', value_model_path='value_network.h5'):
     scores = []
 
     # Initialize the MCTS agent with the loaded networks
-    mcts_agent = MCTSAgent(initial_simulations=400, final_simulations=600, exploration_weight=44.0)
-
+    # mcts_agent = MCTSAgent(initial_simulations=400, final_simulations=600, exploration_weight=44.0)
+    mcts_agent = Expectimax(max_depth=4, max_actions=27, weights=[10.0000, 6.3864, 0.0100, 0.0100, 0.0100])
     for i in range(num_simulations):
         start_time = time.time()  # Start the timer
 
@@ -75,4 +76,7 @@ def run_simulation(num_simulations=1000, output_file='mcts_scores.txt', policy_m
     return scores_array
 
 
-run_simulation(3)
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+run_simulation(1000)

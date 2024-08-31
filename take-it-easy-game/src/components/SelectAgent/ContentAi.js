@@ -26,8 +26,8 @@ function ContentAi({ agent }) {
         return 'The Random option involves making decisions or selections without any specific strategy, relying entirely on chance. It can be useful in scenarios where a baseline or simple comparison is needed against more sophisticated algorithms.';
       case 'Expectimax':
         return 'The Expectimax search algorithm is a game theory algorithm used to maximize the expected utility. It is a variation of the Minimax algorithm. While Minimax assumes that the adversary(the minimizer) plays optimally, the Expectimax doesn’t. This is useful for modelling environments where adversary agents are not optimal, or their actions are based on chance.';
-      case 'RL':
-        return 'Reinforcement Learning is a type of machine learning where an agent learns to make decisions by interacting with an environment, receiving feedback through rewards or penalties, and optimizing its actions over time to maximize cumulative rewards.';
+      case 'Reflex':
+        return 'A baseline agent - not so good. tries to maximize current board.';
       case 'Monte Carlo':
         return 'The Monte Carlo method is a statistical technique that relies on random sampling to approximate solutions to quantitative problems. It is widely used in various fields, including finance, physics, and optimization, for tasks such as estimating probabilities or simulating systems.';
       default:

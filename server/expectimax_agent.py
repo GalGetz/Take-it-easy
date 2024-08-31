@@ -3,7 +3,6 @@ import game_state
 import numpy as np
 
 
-
 class Expectimax(Agent):
     def __init__(self, weights=None, max_depth=5, max_actions=27, evaluation_function=None):
         super(Expectimax, self).__init__()
@@ -62,13 +61,7 @@ class Expectimax(Agent):
         dynamic_depth = max(1, self.max_depth - (empty_tiles // 3.5))  # Increase depth as the board fills up
         dynamic_actions = max(1, self.max_actions - (empty_tiles // 1))  # Consider more actions as the game progresses
 
-        # Measure running time for this method
-        # start_time = time.time()
         best_action = expectimax(game_state, 0, 0, dynamic_depth, dynamic_actions)
-        # end_time = time.time()
-
-        # print(
-        #     f"Expectimax running time (depth {dynamic_depth}, actions {dynamic_actions}): {end_time - start_time:.4f} seconds")
 
         if best_action is not None:
             return best_action
@@ -85,7 +78,6 @@ class Expectimax(Agent):
                 self.weights[3] * duplicated_seqs)
 
     def check_sequences(self, state):
-        # return 10, 10 , 10 ,10
         num_to_seq = np.zeros(9, dtype=int)
         empty_sequences = 0
         broken_sequences = 0
@@ -93,7 +85,6 @@ class Expectimax(Agent):
         total_sum = 0
 
         for seq, index in game_state.seq_to_idx.items():
-            # print(seq)
             component_index = None
             if "_l" in seq:
                 component_index = 2  # Right component
@@ -117,69 +108,11 @@ class Expectimax(Agent):
                 partial_sequences += unique_values[0]
             elif different_values == 0:
                 empty_sequences += 1
-            # duplicated_seqs += sum(i*num_to_seq[i] for i in range(10))
 
         broken_sequences /= total_sum
         empty_sequences /= len(game_state.seq_to_idx)
         partial_sequences /= len(game_state.seq_to_idx)*5
         duplicated_seqs = np.sum(np.maximum(0,num_to_seq-1))
-        #np.arange(1,10)*
 
         return broken_sequences, empty_sequences, partial_sequences, duplicated_seqs
 
-    # def check_sequences(self, state):
-    #     num_to_seq = np.zeros(9, dtype=int)
-    #     empty_sequences = 0
-    #     broken_sequences = 0
-    #     partial_sequences = 0
-    #     total_sum = 0
-    #
-    #     # Weighting factors for each number
-    #     weight_factors = np.arange(1, 10)
-    #
-    #     for seq, indices in game_state.seq_to_idx.items():
-    #         component_index = None
-    #         if "_l" in seq:
-    #             component_index = 2  # Left component
-    #         elif "_d" in seq:
-    #             component_index = 0  # Vertical component
-    #         elif "_r" in seq:
-    #             component_index = 1  # Right component
-    #
-    #         # Filter out empty slots (NaNs) for the current sequence
-    #         mask = ~np.isnan(state.board[indices][:, 0])
-    #         filtered_list = state.board[indices][mask][:, component_index].astype(int)
-    #
-    #         # Skip empty filtered lists
-    #         if len(filtered_list) == 0:
-    #             empty_sequences += 1
-    #             continue
-    #
-    #         sum_values = np.sum(filtered_list)
-    #         total_sum += sum_values
-    #
-    #         unique_values = np.unique(filtered_list)
-    #         different_values = unique_values.size
-    #
-    #         # Ensure we align the bincount output with weight_factors
-    #         bincount = np.bincount(filtered_list, minlength=10)[:9]  # Slice to match the shape of weight_factors
-    #         weighted_sum = np.sum(weight_factors * bincount)
-    #
-    #         if different_values > 1:
-    #             # Penalize broken sequences more heavily if they involve higher numbers
-    #             broken_sequences += weighted_sum
-    #         elif different_values == 1:
-    #             # Reward partial sequences based on the value of the sequence
-    #             partial_sequences += weighted_sum
-    #             num_to_seq[unique_values[0] - 1] += 1
-    #         elif different_values == 0:
-    #             empty_sequences += 1
-    #
-    #     # Normalize sequences and penalties
-    #     if total_sum > 0:
-    #         broken_sequences /= total_sum
-    #     empty_sequences /= len(game_state.seq_to_idx)
-    #     partial_sequences /= len(game_state.seq_to_idx)
-    #     duplicated_seqs = np.sum(weight_factors * num_to_seq)
-    #
-    #     return broken_sequences, empty_sequences, partial_sequences, duplicated_seqs

@@ -1,5 +1,3 @@
-# import necessary modules
-import sys
 import numpy as np
 from skopt import gp_minimize
 from skopt.space import Real
@@ -11,7 +9,7 @@ from expectimax_agent import Expectimax
 
 
 # Function to run the simulation
-def run_simulation(weights, num_simulations=50):
+def run_simulation(weights, num_simulations=150):
     scores = []
 
     for _ in range(num_simulations):
@@ -58,11 +56,11 @@ def run_simulation_with_weights(weights):
 
 # Define the search space for the weights
 space = [
-    Real(0.01, 10.0, name='broken_seq_weight'),
-    Real(0.01, 10.0, name='empty_seq_weight'),
-    Real(0.01, 10.0, name='partial_seq_weight'),
-    Real(0.01, 10.0, name='duplicated_seq_weight'),
-    Real(0.01, 10.0, name='score_weight')
+    Real(0.001, 15.0, name='broken_seq_weight'),
+    Real(0.001, 15.0, name='empty_seq_weight'),
+    Real(0.001, 15.0, name='partial_seq_weight'),
+    Real(0.001, 15.0, name='duplicated_seq_weight'),
+    Real(0.001, 15.0, name='score_weight')
 ]
 
 
@@ -73,7 +71,7 @@ def objective(**weights):
 
 if __name__ == "__main__":
     # Perform Bayesian optimization with progress tracking
-    n_calls = 400
+    n_calls = 100
     print(f"Starting Bayesian optimization with {n_calls} iterations...\n")
     res = gp_minimize(objective, space, n_calls=n_calls, random_state=0, verbose=True)
 

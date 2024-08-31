@@ -34,7 +34,7 @@ const HomePage = ({ onStart }) => {
     <Card elevation={3} sx={{ padding: 4, borderRadius: 3, minHeight: 520 }}>
       <CardContent>
         <Typography variant="h4" sx={{ mb: 6 }} align="center">
-          Timeline of the Game
+          What's next?
         </Typography>
         <Timeline position="alternate">
           <TimelineItem>

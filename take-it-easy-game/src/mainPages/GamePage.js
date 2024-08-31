@@ -31,7 +31,6 @@ export function GameFace({
 
   useEffect(() => {
     const fetchData = async () => {
-      // await chooseAiAgent('Random');
       const tiles = await getRestTiles();
       setRestTiles(tiles);
     };
@@ -89,15 +88,15 @@ export function GameFace({
             Start Game
           </Button>
         </Box>
-        {<ContentAi agent={agent} />}
-        <div className="TilesContainer">
+        {agent && <ContentAi agent={agent} />}
+        {/* <div className="TilesContainer">
           {restTiles &&
             restTiles.map((tile) => (
               <div className="HexCell" key={tile}>
                 <Tile index={tile[0]} values={tile} onClick={() => {}} />
               </div>
             ))}
-        </div>
+        </div> */}
       </>
     );
   };

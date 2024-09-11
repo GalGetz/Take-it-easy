@@ -1,0 +1,10 @@
+Flask==3.0.3
+Flask_Cors==4.0.1
+matplotlib==3.9.2
+numpy==2.1.1
+pandas==2.2.2
+scikit_optimize==0.10.2
+scipy==1.14.1
+sortedcontainers==2.4.0
+tensorflow==2.16.1
+tensorflow_intel==2.16.1

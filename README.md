@@ -1,6 +1,6 @@
 ---
 
-# Flask + ReactJS Application
+# Take It Easy Application
 
 This README contains instructions on how to set up and run a Flask backend and ReactJS frontend locally.
 
@@ -20,7 +20,7 @@ Make sure you have the following installed:
    Clone this repository to your local machine:
    ```bash
    git clone <repository-url>
-   cd <repository-name>
+   cd <take-it-easy>
    ```
 
 2. **Create and activate a virtual environment**
@@ -63,10 +63,8 @@ Make sure you have the following installed:
 
 1. **Navigate to the React folder**
 
-   Assuming your React app is located in a folder named `frontend`:
-
    ```bash
-   cd frontend
+   cd take-it-easy-game
    ```
 
 2. **Install Node.js dependencies**
@@ -86,37 +84,6 @@ Make sure you have the following installed:
    ```
 
    The React app will run by default on [http://localhost:3000](http://localhost:3000).
-
----
-
-### Connecting Flask and React
-
-If your React app needs to communicate with the Flask backend (via API calls):
-
-- Use `http://localhost:5000` as the base URL in your React app for API calls to the Flask backend.
-- Ensure CORS is set up in Flask by adding the following to your Flask app:
-  ```python
-  from flask_cors import CORS
-  CORS(app)
-  ```
-
----
-
-### Additional Notes
-
-- **Environment Variables**: If your app requires specific environment variables, create a `.env` file in the root folder for Flask and add the variables.
-  
-  Example `.env` file:
-  ```bash
-  FLASK_APP=app.py
-  FLASK_ENV=development
-  ```
-
-- **Building for Production**: To build the React frontend for production, run:
-  ```bash
-  npm run build
-  ```
-  Then, serve the static files using Flask or a production-ready web server like Nginx.
 
 ---
 

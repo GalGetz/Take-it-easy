@@ -15,7 +15,7 @@ export default function BasicSelect({ agent, setAgent }) {
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Agent</InputLabel>
         <Select value={agent} label="Agent" onChange={handleChange}>
-          <MenuItem value={'RL'}>Reinforcement Learning</MenuItem>
+          <MenuItem value={'Reflex'}>Reflex</MenuItem>
           <MenuItem value={'Expectimax'}>ExpectiMax</MenuItem>
           <MenuItem value={'Monte Carlo'}>Monte Carlo</MenuItem>
           <MenuItem value={'Random'}>Random</MenuItem>

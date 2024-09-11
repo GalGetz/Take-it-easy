@@ -52,6 +52,7 @@ Make sure you have the following installed:
    Start the Flask backend:
 
    ```bash
+   cd server
    flask run
    ```
 
@@ -60,6 +61,8 @@ Make sure you have the following installed:
 ---
 
 ### Frontend (ReactJS)
+
+on new terminal:
 
 1. **Navigate to the React folder**
 
